@@ -502,7 +502,7 @@
     <Content Include="Html5Core\Html5_core.aspx" />
     <Content Include="Html5Core\html5_core.html" />
     <Content Include="Html5Core\html5_core.js" />
-    <Content Include="Html5Core\Src\html5_core.c" />
+    <Content Include="Html5Core\Src\html5_core.cpp" />
     <Content Include="Html5Fullscreen\html5_fullscreen.html" />
     <Content Include="Html5Fullscreen\html5_fullscreen.js" />
     <Content Include="Html5Fullscreen\Src\html5_fullscreen.c" />
