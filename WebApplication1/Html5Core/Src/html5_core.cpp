@@ -144,6 +144,11 @@ EM_BOOL key_callback(int eventType, const EmscriptenKeyboardEvent* e, void* user
         e->repeat, e->locale, e->charValue, e->charCode, e->keyCode, e->which,
         e->timestamp);
 
+    if (eventType == EMSCRIPTEN_EVENT_KEYDOWN && (!strcmp(e->key, "c") || e->which == 99)) {
+        color = !color;
+        render();
+    }
+
     if (eventType == EMSCRIPTEN_EVENT_KEYPRESS && (!strcmp(e->key, "f") || e->which == 102)) {
         EmscriptenFullscreenChangeEvent fsce;
         EMSCRIPTEN_RESULT ret = emscripten_get_fullscreen_status(&fsce);
