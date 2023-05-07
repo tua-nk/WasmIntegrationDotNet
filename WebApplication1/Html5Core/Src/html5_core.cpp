@@ -567,7 +567,7 @@ int main()
 
     emscripten_set_main_loop(render, 0, 1);
     emscripten_set_interval(timer_callback, 100, NULL);
-    emscripten_set_keydown_callback(0, NULL, false, key_callback);
+    //emscripten_set_keydown_callback(0, NULL, false, key_callback);
 
     return 0;
 }
