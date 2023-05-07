@@ -1,0 +1,661 @@
+﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{AD9E26DD-E2D0-44B2-8792-BBF9FBE8EF3E}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WebApplication1</RootNamespace>
+    <AssemblyName>WebApplication1</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort>44342</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FixedCanvasDual\canvas.js" />
+    <Content Include="FixedCanvasDual\FixedCanvasDual.aspx" />
+    <Content Include="FixedCanvasDual\Src\canvas.c" />
+    <Content Include="FixedCanvasSingle\canvas.js" />
+    <Content Include="FixedCanvasSingle\Src\canvas.c" />
+    <Content Include="glm\CMakeLists.txt" />
+    <Content Include="glm\common.hpp" />
+    <Content Include="glm\detail\compute_common.hpp" />
+    <Content Include="glm\detail\compute_vector_relational.hpp" />
+    <Content Include="glm\detail\func_common.inl" />
+    <Content Include="glm\detail\func_common_simd.inl" />
+    <Content Include="glm\detail\func_exponential.inl" />
+    <Content Include="glm\detail\func_exponential_simd.inl" />
+    <Content Include="glm\detail\func_geometric.inl" />
+    <Content Include="glm\detail\func_geometric_simd.inl" />
+    <Content Include="glm\detail\func_integer.inl" />
+    <Content Include="glm\detail\func_integer_simd.inl" />
+    <Content Include="glm\detail\func_matrix.inl" />
+    <Content Include="glm\detail\func_matrix_simd.inl" />
+    <Content Include="glm\detail\func_packing.inl" />
+    <Content Include="glm\detail\func_packing_simd.inl" />
+    <Content Include="glm\detail\func_trigonometric.inl" />
+    <Content Include="glm\detail\func_trigonometric_simd.inl" />
+    <Content Include="glm\detail\func_vector_relational.inl" />
+    <Content Include="glm\detail\func_vector_relational_simd.inl" />
+    <Content Include="glm\detail\glm.cpp" />
+    <Content Include="glm\detail\qualifier.hpp" />
+    <Content Include="glm\detail\setup.hpp" />
+    <Content Include="glm\detail\type_float.hpp" />
+    <Content Include="glm\detail\type_half.hpp" />
+    <Content Include="glm\detail\type_half.inl" />
+    <Content Include="glm\detail\type_mat2x2.hpp" />
+    <Content Include="glm\detail\type_mat2x2.inl" />
+    <Content Include="glm\detail\type_mat2x3.hpp" />
+    <Content Include="glm\detail\type_mat2x3.inl" />
+    <Content Include="glm\detail\type_mat2x4.hpp" />
+    <Content Include="glm\detail\type_mat2x4.inl" />
+    <Content Include="glm\detail\type_mat3x2.hpp" />
+    <Content Include="glm\detail\type_mat3x2.inl" />
+    <Content Include="glm\detail\type_mat3x3.hpp" />
+    <Content Include="glm\detail\type_mat3x3.inl" />
+    <Content Include="glm\detail\type_mat3x4.hpp" />
+    <Content Include="glm\detail\type_mat3x4.inl" />
+    <Content Include="glm\detail\type_mat4x2.hpp" />
+    <Content Include="glm\detail\type_mat4x2.inl" />
+    <Content Include="glm\detail\type_mat4x3.hpp" />
+    <Content Include="glm\detail\type_mat4x3.inl" />
+    <Content Include="glm\detail\type_mat4x4.hpp" />
+    <Content Include="glm\detail\type_mat4x4.inl" />
+    <Content Include="glm\detail\type_mat4x4_simd.inl" />
+    <Content Include="glm\detail\type_quat.hpp" />
+    <Content Include="glm\detail\type_quat.inl" />
+    <Content Include="glm\detail\type_quat_simd.inl" />
+    <Content Include="glm\detail\type_vec1.hpp" />
+    <Content Include="glm\detail\type_vec1.inl" />
+    <Content Include="glm\detail\type_vec2.hpp" />
+    <Content Include="glm\detail\type_vec2.inl" />
+    <Content Include="glm\detail\type_vec3.hpp" />
+    <Content Include="glm\detail\type_vec3.inl" />
+    <Content Include="glm\detail\type_vec4.hpp" />
+    <Content Include="glm\detail\type_vec4.inl" />
+    <Content Include="glm\detail\type_vec4_simd.inl" />
+    <Content Include="glm\detail\_features.hpp" />
+    <Content Include="glm\detail\_fixes.hpp" />
+    <Content Include="glm\detail\_noise.hpp" />
+    <Content Include="glm\detail\_swizzle.hpp" />
+    <Content Include="glm\detail\_swizzle_func.hpp" />
+    <Content Include="glm\detail\_vectorize.hpp" />
+    <Content Include="glm\exponential.hpp" />
+    <Content Include="glm\ext.hpp" />
+    <Content Include="glm\ext\matrix_clip_space.hpp" />
+    <Content Include="glm\ext\matrix_clip_space.inl" />
+    <Content Include="glm\ext\matrix_common.hpp" />
+    <Content Include="glm\ext\matrix_common.inl" />
+    <Content Include="glm\ext\matrix_double2x2.hpp" />
+    <Content Include="glm\ext\matrix_double2x2_precision.hpp" />
+    <Content Include="glm\ext\matrix_double2x3.hpp" />
+    <Content Include="glm\ext\matrix_double2x3_precision.hpp" />
+    <Content Include="glm\ext\matrix_double2x4.hpp" />
+    <Content Include="glm\ext\matrix_double2x4_precision.hpp" />
+    <Content Include="glm\ext\matrix_double3x2.hpp" />
+    <Content Include="glm\ext\matrix_double3x2_precision.hpp" />
+    <Content Include="glm\ext\matrix_double3x3.hpp" />
+    <Content Include="glm\ext\matrix_double3x3_precision.hpp" />
+    <Content Include="glm\ext\matrix_double3x4.hpp" />
+    <Content Include="glm\ext\matrix_double3x4_precision.hpp" />
+    <Content Include="glm\ext\matrix_double4x2.hpp" />
+    <Content Include="glm\ext\matrix_double4x2_precision.hpp" />
+    <Content Include="glm\ext\matrix_double4x3.hpp" />
+    <Content Include="glm\ext\matrix_double4x3_precision.hpp" />
+    <Content Include="glm\ext\matrix_double4x4.hpp" />
+    <Content Include="glm\ext\matrix_double4x4_precision.hpp" />
+    <Content Include="glm\ext\matrix_float2x2.hpp" />
+    <Content Include="glm\ext\matrix_float2x2_precision.hpp" />
+    <Content Include="glm\ext\matrix_float2x3.hpp" />
+    <Content Include="glm\ext\matrix_float2x3_precision.hpp" />
+    <Content Include="glm\ext\matrix_float2x4.hpp" />
+    <Content Include="glm\ext\matrix_float2x4_precision.hpp" />
+    <Content Include="glm\ext\matrix_float3x2.hpp" />
+    <Content Include="glm\ext\matrix_float3x2_precision.hpp" />
+    <Content Include="glm\ext\matrix_float3x3.hpp" />
+    <Content Include="glm\ext\matrix_float3x3_precision.hpp" />
+    <Content Include="glm\ext\matrix_float3x4.hpp" />
+    <Content Include="glm\ext\matrix_float3x4_precision.hpp" />
+    <Content Include="glm\ext\matrix_float4x2.hpp" />
+    <Content Include="glm\ext\matrix_float4x2_precision.hpp" />
+    <Content Include="glm\ext\matrix_float4x3.hpp" />
+    <Content Include="glm\ext\matrix_float4x3_precision.hpp" />
+    <Content Include="glm\ext\matrix_float4x4.hpp" />
+    <Content Include="glm\ext\matrix_float4x4_precision.hpp" />
+    <Content Include="glm\ext\matrix_int2x2.hpp" />
+    <Content Include="glm\ext\matrix_int2x2_sized.hpp" />
+    <Content Include="glm\ext\matrix_int2x3.hpp" />
+    <Content Include="glm\ext\matrix_int2x3_sized.hpp" />
+    <Content Include="glm\ext\matrix_int2x4.hpp" />
+    <Content Include="glm\ext\matrix_int2x4_sized.hpp" />
+    <Content Include="glm\ext\matrix_int3x2.hpp" />
+    <Content Include="glm\ext\matrix_int3x2_sized.hpp" />
+    <Content Include="glm\ext\matrix_int3x3.hpp" />
+    <Content Include="glm\ext\matrix_int3x3_sized.hpp" />
+    <Content Include="glm\ext\matrix_int3x4.hpp" />
+    <Content Include="glm\ext\matrix_int3x4_sized.hpp" />
+    <Content Include="glm\ext\matrix_int4x2.hpp" />
+    <Content Include="glm\ext\matrix_int4x2_sized.hpp" />
+    <Content Include="glm\ext\matrix_int4x3.hpp" />
+    <Content Include="glm\ext\matrix_int4x3_sized.hpp" />
+    <Content Include="glm\ext\matrix_int4x4.hpp" />
+    <Content Include="glm\ext\matrix_int4x4_sized.hpp" />
+    <Content Include="glm\ext\matrix_integer.hpp" />
+    <Content Include="glm\ext\matrix_integer.inl" />
+    <Content Include="glm\ext\matrix_projection.hpp" />
+    <Content Include="glm\ext\matrix_projection.inl" />
+    <Content Include="glm\ext\matrix_relational.hpp" />
+    <Content Include="glm\ext\matrix_relational.inl" />
+    <Content Include="glm\ext\matrix_transform.hpp" />
+    <Content Include="glm\ext\matrix_transform.inl" />
+    <Content Include="glm\ext\matrix_uint2x2.hpp" />
+    <Content Include="glm\ext\matrix_uint2x2_sized.hpp" />
+    <Content Include="glm\ext\matrix_uint2x3.hpp" />
+    <Content Include="glm\ext\matrix_uint2x3_sized.hpp" />
+    <Content Include="glm\ext\matrix_uint2x4.hpp" />
+    <Content Include="glm\ext\matrix_uint2x4_sized.hpp" />
+    <Content Include="glm\ext\matrix_uint3x2.hpp" />
+    <Content Include="glm\ext\matrix_uint3x2_sized.hpp" />
+    <Content Include="glm\ext\matrix_uint3x3.hpp" />
+    <Content Include="glm\ext\matrix_uint3x3_sized.hpp" />
+    <Content Include="glm\ext\matrix_uint3x4.hpp" />
+    <Content Include="glm\ext\matrix_uint3x4_sized.hpp" />
+    <Content Include="glm\ext\matrix_uint4x2.hpp" />
+    <Content Include="glm\ext\matrix_uint4x2_sized.hpp" />
+    <Content Include="glm\ext\matrix_uint4x3.hpp" />
+    <Content Include="glm\ext\matrix_uint4x3_sized.hpp" />
+    <Content Include="glm\ext\matrix_uint4x4.hpp" />
+    <Content Include="glm\ext\matrix_uint4x4_sized.hpp" />
+    <Content Include="glm\ext\quaternion_common.hpp" />
+    <Content Include="glm\ext\quaternion_common.inl" />
+    <Content Include="glm\ext\quaternion_common_simd.inl" />
+    <Content Include="glm\ext\quaternion_double.hpp" />
+    <Content Include="glm\ext\quaternion_double_precision.hpp" />
+    <Content Include="glm\ext\quaternion_exponential.hpp" />
+    <Content Include="glm\ext\quaternion_exponential.inl" />
+    <Content Include="glm\ext\quaternion_float.hpp" />
+    <Content Include="glm\ext\quaternion_float_precision.hpp" />
+    <Content Include="glm\ext\quaternion_geometric.hpp" />
+    <Content Include="glm\ext\quaternion_geometric.inl" />
+    <Content Include="glm\ext\quaternion_relational.hpp" />
+    <Content Include="glm\ext\quaternion_relational.inl" />
+    <Content Include="glm\ext\quaternion_transform.hpp" />
+    <Content Include="glm\ext\quaternion_transform.inl" />
+    <Content Include="glm\ext\quaternion_trigonometric.hpp" />
+    <Content Include="glm\ext\quaternion_trigonometric.inl" />
+    <Content Include="glm\ext\scalar_common.hpp" />
+    <Content Include="glm\ext\scalar_common.inl" />
+    <Content Include="glm\ext\scalar_constants.hpp" />
+    <Content Include="glm\ext\scalar_constants.inl" />
+    <Content Include="glm\ext\scalar_integer.hpp" />
+    <Content Include="glm\ext\scalar_integer.inl" />
+    <Content Include="glm\ext\scalar_int_sized.hpp" />
+    <Content Include="glm\ext\scalar_packing.hpp" />
+    <Content Include="glm\ext\scalar_packing.inl" />
+    <Content Include="glm\ext\scalar_reciprocal.hpp" />
+    <Content Include="glm\ext\scalar_reciprocal.inl" />
+    <Content Include="glm\ext\scalar_relational.hpp" />
+    <Content Include="glm\ext\scalar_relational.inl" />
+    <Content Include="glm\ext\scalar_uint_sized.hpp" />
+    <Content Include="glm\ext\scalar_ulp.hpp" />
+    <Content Include="glm\ext\scalar_ulp.inl" />
+    <Content Include="glm\ext\vector_bool1.hpp" />
+    <Content Include="glm\ext\vector_bool1_precision.hpp" />
+    <Content Include="glm\ext\vector_bool2.hpp" />
+    <Content Include="glm\ext\vector_bool2_precision.hpp" />
+    <Content Include="glm\ext\vector_bool3.hpp" />
+    <Content Include="glm\ext\vector_bool3_precision.hpp" />
+    <Content Include="glm\ext\vector_bool4.hpp" />
+    <Content Include="glm\ext\vector_bool4_precision.hpp" />
+    <Content Include="glm\ext\vector_common.hpp" />
+    <Content Include="glm\ext\vector_common.inl" />
+    <Content Include="glm\ext\vector_double1.hpp" />
+    <Content Include="glm\ext\vector_double1_precision.hpp" />
+    <Content Include="glm\ext\vector_double2.hpp" />
+    <Content Include="glm\ext\vector_double2_precision.hpp" />
+    <Content Include="glm\ext\vector_double3.hpp" />
+    <Content Include="glm\ext\vector_double3_precision.hpp" />
+    <Content Include="glm\ext\vector_double4.hpp" />
+    <Content Include="glm\ext\vector_double4_precision.hpp" />
+    <Content Include="glm\ext\vector_float1.hpp" />
+    <Content Include="glm\ext\vector_float1_precision.hpp" />
+    <Content Include="glm\ext\vector_float2.hpp" />
+    <Content Include="glm\ext\vector_float2_precision.hpp" />
+    <Content Include="glm\ext\vector_float3.hpp" />
+    <Content Include="glm\ext\vector_float3_precision.hpp" />
+    <Content Include="glm\ext\vector_float4.hpp" />
+    <Content Include="glm\ext\vector_float4_precision.hpp" />
+    <Content Include="glm\ext\vector_int1.hpp" />
+    <Content Include="glm\ext\vector_int1_sized.hpp" />
+    <Content Include="glm\ext\vector_int2.hpp" />
+    <Content Include="glm\ext\vector_int2_sized.hpp" />
+    <Content Include="glm\ext\vector_int3.hpp" />
+    <Content Include="glm\ext\vector_int3_sized.hpp" />
+    <Content Include="glm\ext\vector_int4.hpp" />
+    <Content Include="glm\ext\vector_int4_sized.hpp" />
+    <Content Include="glm\ext\vector_integer.hpp" />
+    <Content Include="glm\ext\vector_integer.inl" />
+    <Content Include="glm\ext\vector_packing.hpp" />
+    <Content Include="glm\ext\vector_packing.inl" />
+    <Content Include="glm\ext\vector_reciprocal.hpp" />
+    <Content Include="glm\ext\vector_reciprocal.inl" />
+    <Content Include="glm\ext\vector_relational.hpp" />
+    <Content Include="glm\ext\vector_relational.inl" />
+    <Content Include="glm\ext\vector_uint1.hpp" />
+    <Content Include="glm\ext\vector_uint1_sized.hpp" />
+    <Content Include="glm\ext\vector_uint2.hpp" />
+    <Content Include="glm\ext\vector_uint2_sized.hpp" />
+    <Content Include="glm\ext\vector_uint3.hpp" />
+    <Content Include="glm\ext\vector_uint3_sized.hpp" />
+    <Content Include="glm\ext\vector_uint4.hpp" />
+    <Content Include="glm\ext\vector_uint4_sized.hpp" />
+    <Content Include="glm\ext\vector_ulp.hpp" />
+    <Content Include="glm\ext\vector_ulp.inl" />
+    <Content Include="glm\fwd.hpp" />
+    <Content Include="glm\geometric.hpp" />
+    <Content Include="glm\glm.hpp" />
+    <Content Include="glm\gtc\bitfield.hpp" />
+    <Content Include="glm\gtc\bitfield.inl" />
+    <Content Include="glm\gtc\color_space.hpp" />
+    <Content Include="glm\gtc\color_space.inl" />
+    <Content Include="glm\gtc\constants.hpp" />
+    <Content Include="glm\gtc\constants.inl" />
+    <Content Include="glm\gtc\epsilon.hpp" />
+    <Content Include="glm\gtc\epsilon.inl" />
+    <Content Include="glm\gtc\integer.hpp" />
+    <Content Include="glm\gtc\integer.inl" />
+    <Content Include="glm\gtc\matrix_access.hpp" />
+    <Content Include="glm\gtc\matrix_access.inl" />
+    <Content Include="glm\gtc\matrix_integer.hpp" />
+    <Content Include="glm\gtc\matrix_inverse.hpp" />
+    <Content Include="glm\gtc\matrix_inverse.inl" />
+    <Content Include="glm\gtc\matrix_transform.hpp" />
+    <Content Include="glm\gtc\matrix_transform.inl" />
+    <Content Include="glm\gtc\noise.hpp" />
+    <Content Include="glm\gtc\noise.inl" />
+    <Content Include="glm\gtc\packing.hpp" />
+    <Content Include="glm\gtc\packing.inl" />
+    <Content Include="glm\gtc\quaternion.hpp" />
+    <Content Include="glm\gtc\quaternion.inl" />
+    <Content Include="glm\gtc\quaternion_simd.inl" />
+    <Content Include="glm\gtc\random.hpp" />
+    <Content Include="glm\gtc\random.inl" />
+    <Content Include="glm\gtc\reciprocal.hpp" />
+    <Content Include="glm\gtc\round.hpp" />
+    <Content Include="glm\gtc\round.inl" />
+    <Content Include="glm\gtc\type_aligned.hpp" />
+    <Content Include="glm\gtc\type_precision.hpp" />
+    <Content Include="glm\gtc\type_precision.inl" />
+    <Content Include="glm\gtc\type_ptr.hpp" />
+    <Content Include="glm\gtc\type_ptr.inl" />
+    <Content Include="glm\gtc\ulp.hpp" />
+    <Content Include="glm\gtc\ulp.inl" />
+    <Content Include="glm\gtc\vec1.hpp" />
+    <Content Include="glm\gtx\associated_min_max.hpp" />
+    <Content Include="glm\gtx\associated_min_max.inl" />
+    <Content Include="glm\gtx\bit.hpp" />
+    <Content Include="glm\gtx\bit.inl" />
+    <Content Include="glm\gtx\closest_point.hpp" />
+    <Content Include="glm\gtx\closest_point.inl" />
+    <Content Include="glm\gtx\color_encoding.hpp" />
+    <Content Include="glm\gtx\color_encoding.inl" />
+    <Content Include="glm\gtx\color_space.hpp" />
+    <Content Include="glm\gtx\color_space.inl" />
+    <Content Include="glm\gtx\color_space_YCoCg.hpp" />
+    <Content Include="glm\gtx\color_space_YCoCg.inl" />
+    <Content Include="glm\gtx\common.hpp" />
+    <Content Include="glm\gtx\common.inl" />
+    <Content Include="glm\gtx\compatibility.hpp" />
+    <Content Include="glm\gtx\compatibility.inl" />
+    <Content Include="glm\gtx\component_wise.hpp" />
+    <Content Include="glm\gtx\component_wise.inl" />
+    <Content Include="glm\gtx\dual_quaternion.hpp" />
+    <Content Include="glm\gtx\dual_quaternion.inl" />
+    <Content Include="glm\gtx\easing.hpp" />
+    <Content Include="glm\gtx\easing.inl" />
+    <Content Include="glm\gtx\euler_angles.hpp" />
+    <Content Include="glm\gtx\euler_angles.inl" />
+    <Content Include="glm\gtx\extend.hpp" />
+    <Content Include="glm\gtx\extend.inl" />
+    <Content Include="glm\gtx\extended_min_max.hpp" />
+    <Content Include="glm\gtx\extended_min_max.inl" />
+    <Content Include="glm\gtx\exterior_product.hpp" />
+    <Content Include="glm\gtx\exterior_product.inl" />
+    <Content Include="glm\gtx\fast_exponential.hpp" />
+    <Content Include="glm\gtx\fast_exponential.inl" />
+    <Content Include="glm\gtx\fast_square_root.hpp" />
+    <Content Include="glm\gtx\fast_square_root.inl" />
+    <Content Include="glm\gtx\fast_trigonometry.hpp" />
+    <Content Include="glm\gtx\fast_trigonometry.inl" />
+    <Content Include="glm\gtx\float_notmalize.inl" />
+    <Content Include="glm\gtx\functions.hpp" />
+    <Content Include="glm\gtx\functions.inl" />
+    <Content Include="glm\gtx\gradient_paint.hpp" />
+    <Content Include="glm\gtx\gradient_paint.inl" />
+    <Content Include="glm\gtx\handed_coordinate_space.hpp" />
+    <Content Include="glm\gtx\handed_coordinate_space.inl" />
+    <Content Include="glm\gtx\hash.hpp" />
+    <Content Include="glm\gtx\hash.inl" />
+    <Content Include="glm\gtx\integer.hpp" />
+    <Content Include="glm\gtx\integer.inl" />
+    <Content Include="glm\gtx\intersect.hpp" />
+    <Content Include="glm\gtx\intersect.inl" />
+    <Content Include="glm\gtx\io.hpp" />
+    <Content Include="glm\gtx\io.inl" />
+    <Content Include="glm\gtx\log_base.hpp" />
+    <Content Include="glm\gtx\log_base.inl" />
+    <Content Include="glm\gtx\matrix_cross_product.hpp" />
+    <Content Include="glm\gtx\matrix_cross_product.inl" />
+    <Content Include="glm\gtx\matrix_decompose.hpp" />
+    <Content Include="glm\gtx\matrix_decompose.inl" />
+    <Content Include="glm\gtx\matrix_factorisation.hpp" />
+    <Content Include="glm\gtx\matrix_factorisation.inl" />
+    <Content Include="glm\gtx\matrix_interpolation.hpp" />
+    <Content Include="glm\gtx\matrix_interpolation.inl" />
+    <Content Include="glm\gtx\matrix_major_storage.hpp" />
+    <Content Include="glm\gtx\matrix_major_storage.inl" />
+    <Content Include="glm\gtx\matrix_operation.hpp" />
+    <Content Include="glm\gtx\matrix_operation.inl" />
+    <Content Include="glm\gtx\matrix_query.hpp" />
+    <Content Include="glm\gtx\matrix_query.inl" />
+    <Content Include="glm\gtx\matrix_transform_2d.hpp" />
+    <Content Include="glm\gtx\matrix_transform_2d.inl" />
+    <Content Include="glm\gtx\mixed_product.hpp" />
+    <Content Include="glm\gtx\mixed_product.inl" />
+    <Content Include="glm\gtx\norm.hpp" />
+    <Content Include="glm\gtx\norm.inl" />
+    <Content Include="glm\gtx\normal.hpp" />
+    <Content Include="glm\gtx\normal.inl" />
+    <Content Include="glm\gtx\normalize_dot.hpp" />
+    <Content Include="glm\gtx\normalize_dot.inl" />
+    <Content Include="glm\gtx\number_precision.hpp" />
+    <Content Include="glm\gtx\number_precision.inl" />
+    <Content Include="glm\gtx\optimum_pow.hpp" />
+    <Content Include="glm\gtx\optimum_pow.inl" />
+    <Content Include="glm\gtx\orthonormalize.hpp" />
+    <Content Include="glm\gtx\orthonormalize.inl" />
+    <Content Include="glm\gtx\pca.hpp" />
+    <Content Include="glm\gtx\pca.inl" />
+    <Content Include="glm\gtx\perpendicular.hpp" />
+    <Content Include="glm\gtx\perpendicular.inl" />
+    <Content Include="glm\gtx\polar_coordinates.hpp" />
+    <Content Include="glm\gtx\polar_coordinates.inl" />
+    <Content Include="glm\gtx\projection.hpp" />
+    <Content Include="glm\gtx\projection.inl" />
+    <Content Include="glm\gtx\quaternion.hpp" />
+    <Content Include="glm\gtx\quaternion.inl" />
+    <Content Include="glm\gtx\range.hpp" />
+    <Content Include="glm\gtx\raw_data.hpp" />
+    <Content Include="glm\gtx\raw_data.inl" />
+    <Content Include="glm\gtx\rotate_normalized_axis.hpp" />
+    <Content Include="glm\gtx\rotate_normalized_axis.inl" />
+    <Content Include="glm\gtx\rotate_vector.hpp" />
+    <Content Include="glm\gtx\rotate_vector.inl" />
+    <Content Include="glm\gtx\scalar_multiplication.hpp" />
+    <Content Include="glm\gtx\scalar_relational.hpp" />
+    <Content Include="glm\gtx\scalar_relational.inl" />
+    <Content Include="glm\gtx\spline.hpp" />
+    <Content Include="glm\gtx\spline.inl" />
+    <Content Include="glm\gtx\std_based_type.hpp" />
+    <Content Include="glm\gtx\std_based_type.inl" />
+    <Content Include="glm\gtx\string_cast.hpp" />
+    <Content Include="glm\gtx\string_cast.inl" />
+    <Content Include="glm\gtx\texture.hpp" />
+    <Content Include="glm\gtx\texture.inl" />
+    <Content Include="glm\gtx\transform.hpp" />
+    <Content Include="glm\gtx\transform.inl" />
+    <Content Include="glm\gtx\transform2.hpp" />
+    <Content Include="glm\gtx\transform2.inl" />
+    <Content Include="glm\gtx\type_aligned.hpp" />
+    <Content Include="glm\gtx\type_aligned.inl" />
+    <Content Include="glm\gtx\type_trait.hpp" />
+    <Content Include="glm\gtx\type_trait.inl" />
+    <Content Include="glm\gtx\vector_angle.hpp" />
+    <Content Include="glm\gtx\vector_angle.inl" />
+    <Content Include="glm\gtx\vector_query.hpp" />
+    <Content Include="glm\gtx\vector_query.inl" />
+    <Content Include="glm\gtx\vec_swizzle.hpp" />
+    <Content Include="glm\gtx\wrap.hpp" />
+    <Content Include="glm\gtx\wrap.inl" />
+    <Content Include="glm\integer.hpp" />
+    <Content Include="glm\mat2x2.hpp" />
+    <Content Include="glm\mat2x3.hpp" />
+    <Content Include="glm\mat2x4.hpp" />
+    <Content Include="glm\mat3x2.hpp" />
+    <Content Include="glm\mat3x3.hpp" />
+    <Content Include="glm\mat3x4.hpp" />
+    <Content Include="glm\mat4x2.hpp" />
+    <Content Include="glm\mat4x3.hpp" />
+    <Content Include="glm\mat4x4.hpp" />
+    <Content Include="glm\matrix.hpp" />
+    <Content Include="glm\packing.hpp" />
+    <Content Include="glm\simd\common.h" />
+    <Content Include="glm\simd\exponential.h" />
+    <Content Include="glm\simd\geometric.h" />
+    <Content Include="glm\simd\integer.h" />
+    <Content Include="glm\simd\matrix.h" />
+    <Content Include="glm\simd\neon.h" />
+    <Content Include="glm\simd\packing.h" />
+    <Content Include="glm\simd\platform.h" />
+    <Content Include="glm\simd\trigonometric.h" />
+    <Content Include="glm\simd\vector_relational.h" />
+    <Content Include="glm\trigonometric.hpp" />
+    <Content Include="glm\vec2.hpp" />
+    <Content Include="glm\vec3.hpp" />
+    <Content Include="glm\vec4.hpp" />
+    <Content Include="glm\vector_relational.hpp" />
+    <Content Include="Html5Core\Html5_core.aspx" />
+    <Content Include="Html5Core\html5_core.html" />
+    <Content Include="Html5Core\html5_core.js" />
+    <Content Include="Html5Core\Src\html5_core.c" />
+    <Content Include="Html5Fullscreen\html5_fullscreen.html" />
+    <Content Include="Html5Fullscreen\html5_fullscreen.js" />
+    <Content Include="Html5Fullscreen\Src\html5_fullscreen.c" />
+    <Content Include="Html5Mouse\html5_mouse.html" />
+    <Content Include="Html5Mouse\html5_mouse.js" />
+    <Content Include="Html5Mouse\Src\html5_mouse.c" />
+    <Content Include="ResizeableCanvas\canvas.js" />
+    <Content Include="ResizeableCanvas\Src\canvas.c" />
+    <Content Include="FixedCanvasSingle\FixedCanvasSingle.aspx" />
+    <Content Include="ResizeableCanvas\ResizeableCanvas.aspx" />
+    <Content Include="Home\Home.aspx" />
+    <Content Include="RotatingTriangle\Src\WpWASM_rotatingTriangle.cpp" />
+    <Content Include="RotatingTriangle\WpWASM_rotatingTriangle.js" />
+    <Content Include="RotatingTriangle\WpWASM_rotatingTriangle_FullScreen_Minimal.aspx" />
+    <Content Include="WasmLoader\Src\WpWASM_rotatingTriangle_huge.cpp" />
+    <Content Include="WasmLoader\WasmLoaderV6.aspx" />
+    <Content Include="WasmLoader\WpWASM_rotatingTriangle_huge.js" />
+    <Content Include="Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FixedCanvasDual\FixedCanvasDual.aspx.cs">
+      <DependentUpon>FixedCanvasDual.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FixedCanvasDual\FixedCanvasDual.aspx.designer.cs">
+      <DependentUpon>FixedCanvasDual.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Html5Core\Html5_core.aspx.cs">
+      <DependentUpon>Html5_core.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Html5Core\Html5_core.aspx.designer.cs">
+      <DependentUpon>Html5_core.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MasterPages\WasmPageAutoLoad.Master.cs">
+      <DependentUpon>WasmPageAutoLoad.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MasterPages\WasmPageAutoLoad.Master.designer.cs">
+      <DependentUpon>WasmPageAutoLoad.Master</DependentUpon>
+    </Compile>
+    <Compile Include="MasterPages\WasmPage.Master.cs">
+      <DependentUpon>WasmPage.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MasterPages\WasmPage.Master.designer.cs">
+      <DependentUpon>WasmPage.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="FixedCanvasSingle\FixedCanvasSingle.aspx.cs">
+      <DependentUpon>FixedCanvasSingle.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FixedCanvasSingle\FixedCanvasSingle.aspx.designer.cs">
+      <DependentUpon>FixedCanvasSingle.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ResizeableCanvas\ResizeableCanvas.aspx.cs">
+      <DependentUpon>ResizeableCanvas.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ResizeableCanvas\ResizeableCanvas.aspx.designer.cs">
+      <DependentUpon>ResizeableCanvas.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Home\Home.aspx.cs">
+      <DependentUpon>Home.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Home\Home.aspx.designer.cs">
+      <DependentUpon>Home.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="RotatingTriangle\WpWASM_rotatingTriangle_FullScreen_Minimal.aspx.cs">
+      <DependentUpon>WpWASM_rotatingTriangle_FullScreen_Minimal.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RotatingTriangle\WpWASM_rotatingTriangle_FullScreen_Minimal.aspx.designer.cs">
+      <DependentUpon>WpWASM_rotatingTriangle_FullScreen_Minimal.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WasmLoader\WasmLoaderV6.aspx.cs">
+      <DependentUpon>WasmLoaderV6.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WasmLoader\WasmLoaderV6.aspx.designer.cs">
+      <DependentUpon>WasmLoaderV6.aspx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="MasterPages\WasmPage.Master" />
+    <Content Include="FixedCanvasSingle\Src\build.bat" />
+    <Content Include="FixedCanvasDual\Src\build.bat" />
+    <Content Include="FixedCanvasSingle\canvas.wasm" />
+    <Content Include="FixedCanvasDual\canvas.wasm" />
+    <Content Include="Html5Core\Src\BuildC.bat" />
+    <Content Include="Html5Core\html5_core.wasm" />
+    <Content Include="Html5Fullscreen\Src\BuildC.bat" />
+    <Content Include="Html5Mouse\Src\BuildC.bat" />
+    <Content Include="Html5Fullscreen\html5_fullscreen.wasm" />
+    <Content Include="Html5Mouse\html5_mouse.wasm" />
+    <Content Include="MasterPages\WasmPageAutoLoad.Master" />
+    <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\tonybrownlaw-002-site3 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\tonybrownlaw-002-site3 - FTP1.pubxml" />
+    <None Include="Properties\PublishProfiles\tonybrownlaw-002-site3 - Web Deploy.pubxml" />
+    <Content Include="ResizeableCanvas\canvas.wasm" />
+    <Content Include="ResizeableCanvas\Src\build.bat" />
+    <None Include="Properties\PublishProfiles\tonybrownlaw-002-site3 - Web Deploy1.pubxml" />
+    <Content Include="RotatingTriangle\Src\BuildCpp.bat" />
+    <None Include="RotatingTriangle\WpWASM_rotatingTriangle.wasm" />
+    <Content Include="WasmLoader\Src\CompileCpp.bat" />
+    <Content Include="WasmLoader\WpWASM_rotatingTriangle_huge.wasm" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>57025</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:44339/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
