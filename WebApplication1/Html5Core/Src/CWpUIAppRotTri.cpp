@@ -2,6 +2,11 @@
 
 bool color = false;
 
+CWpUIAppRotTri::CWpUIAppRotTri()
+{
+    
+}
+
 // Application specific implimentations of UI events and functions
 void CWpUIAppRotTri::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, bool bCtrl, bool bFn)
 {

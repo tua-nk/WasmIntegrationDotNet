@@ -43,12 +43,13 @@ EM_BOOL em_key_callback(int eventType, const EmscriptenKeyboardEvent* e, void* u
     // Translation of emscripten params to "Warp params"...
     char cKey; bool bDown; bool bAlt; bool bShift; bool bCtrl; bool bFn;
     //cKey = e->key;
-    //bAlt = e->altKey ? true: false;
-    //bShift = e->shiftKey ? true : false;
-    //bCtrl = e->ctrlKey ? true: false;
+    cKey = 'c';
+    bAlt = e->altKey ? true: false;
+    bShift = e->shiftKey ? true : false;
+    bCtrl = e->ctrlKey ? true: false;
 
     // Call Warp base class equivalent func
-    if (pWpUIEm != NULL) pWpUIEm->OnKeyboard(cKey, bDown, bAlt, bShift, bCtrl, bFn);
+    if (pWpUIEm != NULL) pWpUIEm->OnKeyboard(cKey, true, bAlt, bShift, bCtrl, bFn);
     else ToError("em_key_callback");
 
     return 0;
@@ -239,42 +240,161 @@ void em_render()
     else ToError("em_render");
 }
 
+//========================================================================================================
+// New Class override to impliment Emscripten UI framework
+
 CWpUIBaseEm::CWpUIBaseEm()
 {
-    if (pWpUIEm == NULL) pWpUIEm = this; // setup ref to this object for callbacks
+    if (pWpUIEm == NULL) {
+            pWpUIEm = this; // setup ref to this object for callbacks
+    }
 }
 
-void CWpUIBaseEm::Init()
-{
+//____________________________________
+// Init Plateform Specfic UI base code (emscripton in this case, but could also be GLFW or SDL etc)
+void CWpUIBaseEm::Init() {
     // Setup Base class UI Event call back functions
     em_init(); // setup callbacks etc.
 }
 
-// ____________________________________
-// Impliment Base class Setters/Getters
+//__________________________
+// Render Call for animation
+void CWpUIBaseEm::OnRenderAnimate()
+{
+    // Override to call render code
+}
 
+//========================================================================================================
+// WARP APPLICATION UI EVENTS CALLBACK API
+
+//_________________________
+// KEYBOARD EVENT CALLBACKS
+void CWpUIBaseEm::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, bool bCtrl, bool bFn) {
+    // if bDown = false then key is going UP.
+    // Override to handle keyboard events
+}
+
+//______________________
+// MOUSE EVENT CALLBACKS
+
+void CWpUIBaseEm::OnMouse_Move(sScreenPos sNewPos) {
+    // Override
+}
+void CWpUIBaseEm::OnMouse_Click(eWpMouseButton eButton, bool bDown, sScreenPos sMousePos) {
+    // Override
+    // if bDown = false then button is going UP.
+}
+
+void CWpUIBaseEm::OnMouse_DoubleClick(eWpMouseButton, sScreenPos sPos) {
+    // Override
+}
+void CWpUIBaseEm::OnMouse_Wheel(float fDx, float fDy) {
+    // Override
+}
+void CWpUIBaseEm::OnMouse_EnterWin(sScreenPos sPos) {
+    // Override
+}
+void CWpUIBaseEm::OnMouse_LeaveWin(sScreenPos sPos) {
+    // Override
+}
+
+//_______________________
+// WINDOW EVENT CALLBACKS
+
+void CWpUIBaseEm::OnWin_Resize(int iNewH, int iNewW) {
+    // Send new size to console, use WpWinGetsize()
+}
+void CWpUIBaseEm::OnWin_Minimized() {
+    // Override
+}
+void CWpUIBaseEm::OnWin_Maximized() {
+    // Override
+}
+void CWpUIBaseEm::OnWin_Regular() { // size back to regular from min or max
+    // Override
+}
+
+void CWpUIBaseEm::OnWin_FocusChange(bool bFocusGained) {
+    // if false then focus was lost from this window.
+    // Override
+}
+
+//________________________________
+// "DRAG AND DROP" EVENT CALLBACKS
+void CWpUIBaseEm::OnDrag(bool bStart) {
+    // if bStart is true then draging has started, if false then dragging has stopped
+    // Override
+}
+void CWpUIBaseEm::OnDropFiles(std::vector<std::string> FileNameList, sScreenPos MousePos) {
+    // Override
+}
+void CWpUIBaseEm::OnDropText(std::string strText, sScreenPos MousePos) {
+    // Override
+}
+
+//========================================================================================================
+// WARP APPLICATION UI SET/GET FUNCTION API
+//   - Platform independant code - calls Plateform specific event functions (Emscription HTML5 / GLFW / SDL)
+
+//___________
+// WINDOW API
 void CWpUIBaseEm::Win_SetTitle(std::string strTitle) {
     // Emscripten specific code to Set the window tittle
     emscripten_set_window_title(strTitle.c_str());
 }
-
 std::string CWpUIBaseEm::Win_GetTitle() {
     // Emscripten specific code to Set the window tittle
     char* current_window_title = emscripten_get_window_title();
+    return std::string(current_window_title);
 }
 
-void CWpUIBaseEm::Mouse_CurserSet(eWpCurserType eWpNewCurser)
-{
+void CWpUIBaseEm::Win_SetFocus() {
+    // platform specific code to Set(force?) the focus to this window
+}
+void CWpUIBaseEm::Win_SetSize(int iHeight, int iWidth) {
+    // platform specific code to Set the window size explicitly
+}
+sWinSize CWpUIBaseEm::Win_GetSize() {
+    // platform specific code to Get the window size. send to console
+    return sWinSize();
+}
+
+//__________
+// MOUSE API
+sScreenPos CWpUIBaseEm::Mouse_PosGet() {
+    // platform specific code to Get the current mouse position
+    return sScreenPos();
+}
+void CWpUIBaseEm::Mouse_PosSet(sScreenPos NewPos) {
+    // platform specific code to Set the current mouse position
+}
+void CWpUIBaseEm::Mouse_CurserSet(eWpCurserType eWpNewCurser) {
     switch (eWpNewCurser) {
-        case eWpCurserType::eWpCurser_Arrow:
-        {
-            // Emscripten specific code to set to new curser type to an "Arrow"
-            break;
-        }
-        case eWpCurserType::eWpCurser_IBeam:
-        {
-            //.etc
-            break;
-        }
+    case eWpCurserType::eWpCurser_Arrow:
+    {
+        // Emscripten specific code to set to new curser type to an "Arrow"
+        break;
     }
+    case eWpCurserType::eWpCurser_IBeam:
+    {
+        //.etc
+        break;
+    }
+    }
+}
+void CWpUIBaseEm::Mouse_CurserShow() {
+    // platform specific code to hide the curser
+}
+void CWpUIBaseEm::Mouse_CurserHide() {
+    // platform specific code to show the curser
+}
+
+//______________
+// CLIPBOARD API
+void CWpUIBaseEm::ClipboardSet(std::string strClipText) {
+    // platform specific code to save strClipText to the clip board.
+}
+std::string CWpUIBaseEm::ClipboardGet() {
+    // platform specific code to return clipboard's text in strClipText.
+    return "";
 }

@@ -88,7 +88,7 @@ void CWpUIBase::OnDrag(bool bStart) {
 void CWpUIBase::OnDropFiles(std::vector<std::string> FileNameList, sScreenPos MousePos) {
     // Override
 }
-void OnDropText(std::string strText, sScreenPos MousePos) {
+void CWpUIBase::OnDropText(std::string strText, sScreenPos MousePos) {
     // Override
 }
 

@@ -508,7 +508,7 @@
     <Content Include="Html5Core\Src\CWpUIBase.h" />
     <Content Include="Html5Core\Src\CWpUIBaseEm.cpp" />
     <Content Include="Html5Core\Src\CWpUIBaseEm.h" />
-    <Content Include="Html5Core\Src\html5_core.cpp" />
+    <Content Include="Html5Core\Src\main.cpp" />
     <Content Include="Html5Fullscreen\html5_fullscreen.html" />
     <Content Include="Html5Fullscreen\html5_fullscreen.js" />
     <Content Include="Html5Fullscreen\Src\html5_fullscreen.c" />

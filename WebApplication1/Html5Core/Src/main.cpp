@@ -77,7 +77,6 @@ void render() {
     }
     else {
         glUniform4f(fragColorLoc, 1.0f, 0.0f, 1.0f, 1.0f);
-        //        glUniform4f(fragColorLoc, 0.0f, 0.0f, 1.0f, 1.0f);
     }
 
     glBindVertexArray(VAO);
@@ -91,10 +90,11 @@ void timer_callback(void* userData) {
 }
 
 // Global UI Class
-CWpUIAppRotTri gRotTriApp;
+CWpUIAppRotTri* gRotTriApp = NULL;
 
 int main() {
-    gRotTriApp.Init();
+    gRotTriApp = new CWpUIAppRotTri();
+    gRotTriApp->Init();
 
     EmscriptenWebGLContextAttributes attrs;
     emscripten_webgl_init_context_attributes(&attrs);
