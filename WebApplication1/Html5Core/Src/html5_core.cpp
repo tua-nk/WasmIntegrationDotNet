@@ -19,7 +19,7 @@ const char* fragmentShaderSource = "#version 300 es\n"
 
 bool bRotateOn = true; // GND: added for user toggle on/off
 float angle = 0.5f;
-bool color = false;
+extern bool color;
 
 GLuint vertexShader, fragmentShader, shaderProgram, VBO, VAO;
 

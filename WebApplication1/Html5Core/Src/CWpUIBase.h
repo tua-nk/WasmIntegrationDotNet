@@ -30,10 +30,7 @@ public:
     bool m_bAnimateOn;
     bool RenAnimateIsOn();
 
-    CWpUIBase()
-    {
-
-    }
+    CWpUIBase();
 
     //____________________________________
     // Init Plateform Specfic UI base code (emscripton in this case, but could also be GLFW or SDL etc)

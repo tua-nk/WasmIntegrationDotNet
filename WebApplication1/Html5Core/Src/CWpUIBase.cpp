@@ -5,10 +5,10 @@ bool CWpUIBase::RenAnimateIsOn()
     return m_bAnimateOn;
 }
 
-//CWpUIBase::CWpUIBase()
-//{
-//    m_bAnimateOn = false;
-//}
+CWpUIBase::CWpUIBase()
+{
+    m_bAnimateOn = false;
+}
 
 //____________________________________
 // Init Plateform Specfic UI base code (emscripton in this case, but could also be GLFW or SDL etc)
