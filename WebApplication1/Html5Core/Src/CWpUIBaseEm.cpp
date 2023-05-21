@@ -17,7 +17,7 @@ const char* emscripten_result_to_string(EMSCRIPTEN_RESULT result) {
 }
 
 // Console Output 
-void WpUI_ToConsoleEm(std::string& ConOut)
+void WpUI_ToConsoleEm(std::string ConOut)
 {
     // Send to WASM console
     printf(ConOut.c_str());
@@ -42,14 +42,14 @@ EM_BOOL em_key_callback(int eventType, const EmscriptenKeyboardEvent* e, void* u
 
     // Translation of emscripten params to "Warp params"...
     char cKey; bool bDown; bool bAlt; bool bShift; bool bCtrl; bool bFn;
-    //cKey = e->key;
-    cKey = 'c';
+    cKey = e->key[0];
+    bDown = eventType == EMSCRIPTEN_EVENT_KEYDOWN? true: false;
     bAlt = e->altKey ? true: false;
     bShift = e->shiftKey ? true : false;
     bCtrl = e->ctrlKey ? true: false;
 
     // Call Warp base class equivalent func
-    if (pWpUIEm != NULL) pWpUIEm->OnKeyboard(cKey, true, bAlt, bShift, bCtrl, bFn);
+    if (pWpUIEm != NULL) pWpUIEm->OnKeyboard(cKey, bDown, bAlt, bShift, bCtrl, bFn);
     else ToError("em_key_callback");
 
     return 0;
@@ -64,13 +64,51 @@ EM_BOOL em_mouse_callback(int eventType, const EmscriptenMouseEvent* e, void* us
         e->timestamp);
 
     // Translation of emscripten params to "Warp params"...
-    sScreenPos sNewPos;
-    sNewPos.iXpos = e->movementX;
-    sNewPos.iYpos = e->movementY;
+    sScreenPos sNewPos(e->screenX, e->screenY);
+    bool bDown = eventType == EMSCRIPTEN_EVENT_MOUSEDOWN ? true : false;
 
     // Call Warp base class equivalent func
     if (pWpUIEm != NULL) pWpUIEm->OnMouse_Move(sNewPos);
     else ToError("em_mouse_callback");
+
+    if (pWpUIEm != NULL)
+    {
+        switch (eventType)
+        {
+        case EMSCRIPTEN_EVENT_MOUSEMOVE:
+        {
+            pWpUIEm->OnMouse_Move(sNewPos);
+            break;
+        }
+        case EMSCRIPTEN_EVENT_CLICK:
+        {
+            pWpUIEm->OnMouse_Click((eWpMouseButton)e->button, bDown, sNewPos);
+            break;
+        }
+        case EMSCRIPTEN_EVENT_DBLCLICK:
+        {
+            pWpUIEm->OnMouse_DoubleClick((eWpMouseButton)e->button, sNewPos);
+            break;
+        }
+        case EMSCRIPTEN_EVENT_WHEEL:
+        {
+            //virtual void OnMouse_Wheel(float fDx, float fDy);
+            break;
+        }
+        case EMSCRIPTEN_EVENT_MOUSEENTER:
+        {
+            pWpUIEm->OnMouse_EnterWin(sNewPos);
+            break;
+        }
+        case EMSCRIPTEN_EVENT_MOUSELEAVE:
+        {
+            pWpUIEm->OnMouse_LeaveWin(sNewPos);
+            break;
+        }
+        default:
+            break;
+        }
+    }
 
     return 0;
 }
@@ -223,9 +261,182 @@ void em_init()
     // Set Enscripton call back funcs
     EMSCRIPTEN_RESULT ret = emscripten_set_keypress_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_key_callback);
     TEST_RESULT(emscripten_set_keypress_callback);
+    ret = emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_key_callback);
+    TEST_RESULT(emscripten_set_keydown_callback);
+    ret = emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_key_callback);
+    TEST_RESULT(emscripten_set_keyup_callback);
 
     ret = emscripten_set_click_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_mouse_callback);
     TEST_RESULT(emscripten_set_click_callback);
+    ret = emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_mouse_callback);
+    TEST_RESULT(emscripten_set_mousedown_callback);
+    ret = emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_mouse_callback);
+    TEST_RESULT(emscripten_set_mouseup_callback);
+    ret = emscripten_set_dblclick_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_mouse_callback);
+    TEST_RESULT(emscripten_set_dblclick_callback);
+    ret = emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_mouse_callback);
+    TEST_RESULT(emscripten_set_mousemove_callback);
+    ret = emscripten_set_mouseenter_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_mouse_callback);
+    TEST_RESULT(emscripten_set_mouseenter_callback);
+    ret = emscripten_set_mouseleave_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_mouse_callback);
+    TEST_RESULT(emscripten_set_mouseleave_callback);
+    ret = emscripten_set_mouseover_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_mouse_callback);
+    TEST_RESULT(emscripten_set_mouseover_callback);
+    ret = emscripten_set_mouseout_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_mouse_callback);
+    TEST_RESULT(emscripten_set_mouseout_callback);
+
+    ret = emscripten_set_wheel_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_wheel_callback);
+    TEST_RESULT(emscripten_set_wheel_callback);
+
+    ret = emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_uievent_callback);
+    TEST_RESULT(emscripten_set_resize_callback);
+    ret = emscripten_set_scroll_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, 0, 1, em_uievent_callback);
+    TEST_RESULT(emscripten_set_scroll_callback);
+
+    ret = emscripten_set_blur_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_focusevent_callback);
+    TEST_RESULT(emscripten_set_blur_callback);
+    ret = emscripten_set_focus_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_focusevent_callback);
+    TEST_RESULT(emscripten_set_focus_callback);
+    ret = emscripten_set_focusin_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_focusevent_callback);
+    TEST_RESULT(emscripten_set_focusin_callback);
+    ret = emscripten_set_focusout_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_focusevent_callback);
+    TEST_RESULT(emscripten_set_focusout_callback);
+
+    ret = emscripten_set_deviceorientation_callback(0, 1, em_deviceorientation_callback);
+    TEST_RESULT(emscripten_set_deviceorientation_callback);
+    ret = emscripten_set_devicemotion_callback(0, 1, em_devicemotion_callback);
+    TEST_RESULT(emscripten_set_devicemotion_callback);
+
+    ret = emscripten_set_orientationchange_callback(0, 1, em_orientationchange_callback);
+    TEST_RESULT(emscripten_set_orientationchange_callback);
+
+    // Test the polling of orientation.
+    EmscriptenOrientationChangeEvent oce;
+    ret = emscripten_get_orientation_status(&oce);
+    TEST_RESULT(emscripten_get_orientation_status);
+    if (ret == EMSCRIPTEN_RESULT_SUCCESS) {
+        printf("The current orientation is:\n");
+        em_orientationchange_callback(EMSCRIPTEN_EVENT_ORIENTATIONCHANGE, &oce, 0);
+    }
+
+    int newOrientation = (oce.orientationIndex == EMSCRIPTEN_ORIENTATION_PORTRAIT_PRIMARY
+        || oce.orientationIndex == EMSCRIPTEN_ORIENTATION_PORTRAIT_SECONDARY) ? EMSCRIPTEN_ORIENTATION_LANDSCAPE_PRIMARY : EMSCRIPTEN_ORIENTATION_PORTRAIT_PRIMARY;
+    // Test locking of orientation.
+    ret = emscripten_lock_orientation(newOrientation);
+    TEST_RESULT(emscripten_lock_orientation);
+    if (ret == EMSCRIPTEN_RESULT_SUCCESS) {
+        printf("Locked orientation to state %d.\n", newOrientation);
+    }
+
+    ret = emscripten_get_orientation_status(&oce);
+    TEST_RESULT(emscripten_get_orientation_status);
+    if (ret == EMSCRIPTEN_RESULT_SUCCESS) {
+        printf("The current orientation is after locking:\n");
+        em_orientationchange_callback(18, &oce, 0);
+    }
+
+    ret = emscripten_unlock_orientation();
+    TEST_RESULT(emscripten_unlock_orientation);
+    if (ret == EMSCRIPTEN_RESULT_SUCCESS) {
+        printf("Unlocked orientation.\n");
+    }
+
+    EmscriptenFullscreenChangeEvent fsce;
+    ret = emscripten_get_fullscreen_status(&fsce);
+    TEST_RESULT(emscripten_get_fullscreen_status);
+    if (ret == EMSCRIPTEN_RESULT_SUCCESS) {
+        printf("The current fullscreen status is:\n");
+        em_fullscreenchange_callback(EMSCRIPTEN_EVENT_FULLSCREENCHANGE, &fsce, 0);
+    }
+
+    ret = emscripten_set_fullscreenchange_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, 0, 1, em_fullscreenchange_callback);
+    TEST_RESULT(emscripten_set_fullscreenchange_callback);
+
+    // These won't do anything, since fullscreen must be requested in an event handler,
+    // but call these anyways to confirm that they don't crash in an exception in the test suite.
+    ret = emscripten_request_fullscreen("#canvas", 1);
+    TEST_RESULT(emscripten_request_fullscreen);
+    ret = emscripten_exit_fullscreen();
+    TEST_RESULT(emscripten_exit_fullscreen);
+
+    EmscriptenPointerlockChangeEvent plce;
+    ret = emscripten_get_pointerlock_status(&plce);
+    TEST_RESULT(emscripten_get_pointerlock_status);
+    if (ret == EMSCRIPTEN_RESULT_SUCCESS) {
+        printf("The current pointerlock status is:\n");
+        em_pointerlockchange_callback(EMSCRIPTEN_EVENT_POINTERLOCKCHANGE, &plce, 0);
+    }
+
+    ret = emscripten_set_pointerlockchange_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, 0, 1, em_pointerlockchange_callback);
+    TEST_RESULT(emscripten_set_pointerlockchange_callback);
+
+    // These won't do anything, since pointer lock must be requested in an event handler,
+    // but call these anyways to confirm that they don't crash in an exception in the test suite.
+    ret = emscripten_request_pointerlock("#canvas", 1);
+    TEST_RESULT(emscripten_request_pointerlock);
+    ret = emscripten_exit_pointerlock();
+    TEST_RESULT(emscripten_exit_pointerlock);
+
+    int vibratePattern[] = {
+      150, 500,
+      300, 500,
+      450
+    };
+    ret = emscripten_vibrate_pattern(vibratePattern, sizeof(vibratePattern) / sizeof(vibratePattern[0]));
+    TEST_RESULT(emscripten_vibrate_pattern);
+
+    EmscriptenVisibilityChangeEvent vce;
+    ret = emscripten_get_visibility_status(&vce);
+    TEST_RESULT(emscripten_get_visibility_status);
+    if (ret == EMSCRIPTEN_RESULT_SUCCESS) {
+        printf("Current visibility status:\n");
+        em_visibilitychange_callback(EMSCRIPTEN_EVENT_VISIBILITYCHANGE, &vce, 0);
+    }
+
+    ret = emscripten_set_visibilitychange_callback(0, 1, em_visibilitychange_callback);
+    TEST_RESULT(emscripten_set_visibilitychange_callback);
+
+    ret = emscripten_set_touchstart_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_touch_callback);
+    TEST_RESULT(emscripten_set_touchstart_callback);
+    ret = emscripten_set_touchend_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_touch_callback);
+    TEST_RESULT(emscripten_set_touchend_callback);
+    ret = emscripten_set_touchmove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_touch_callback);
+    TEST_RESULT(emscripten_set_touchmove_callback);
+    ret = emscripten_set_touchcancel_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, 1, em_touch_callback);
+    TEST_RESULT(emscripten_set_touchcancel_callback);
+
+    ret = emscripten_set_beforeunload_callback(0, beforeunload_callback);
+    TEST_RESULT(emscripten_set_beforeunload_callback);
+
+    ret = emscripten_set_batterychargingchange_callback(0, em_battery_callback);
+    TEST_RESULT(emscripten_set_batterychargingchange_callback);
+    ret = emscripten_set_batterylevelchange_callback(0, em_battery_callback);
+    TEST_RESULT(emscripten_set_batterylevelchange_callback);
+
+    EmscriptenBatteryEvent bs;
+    ret = emscripten_get_battery_status(&bs);
+    TEST_RESULT(emscripten_get_battery_status);
+    if (ret == EMSCRIPTEN_RESULT_SUCCESS) {
+        printf("Current battery status:\n");
+        em_battery_callback(EMSCRIPTEN_EVENT_BATTERYLEVELCHANGE, &bs, 0);
+    }
+
+    ret = emscripten_set_webglcontextlost_callback("#canvas", 0, 1, em_webglcontext_callback);
+    TEST_RESULT(emscripten_set_webglcontextlost_callback);
+    ret = emscripten_set_webglcontextrestored_callback("#canvas", 0, 1, em_webglcontext_callback);
+    TEST_RESULT(emscripten_set_webglcontextrestored_callback);
+
+    const char* source_window_title = "test window title";
+    emscripten_set_window_title(source_window_title);
+    char* current_window_title = emscripten_get_window_title();
+    ret = (strcmp(source_window_title, current_window_title) == 0 \
+        ? EMSCRIPTEN_RESULT_SUCCESS : EMSCRIPTEN_RESULT_FAILED);
+    TEST_RESULT(emscripten_get_window_title);
+
+    int width, height;
+    emscripten_get_screen_size(&width, &height);
+    ret = (width && height) ? EMSCRIPTEN_RESULT_SUCCESS : EMSCRIPTEN_RESULT_FAILED;
+    TEST_RESULT(emscripten_get_screen_size);
 
     //....ETC..
 }
@@ -272,6 +483,7 @@ void CWpUIBaseEm::OnRenderAnimate()
 void CWpUIBaseEm::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, bool bCtrl, bool bFn) {
     // if bDown = false then key is going UP.
     // Override to handle keyboard events
+    WpUI_ToConsoleEm("CWpUIBaseEm::OnKeyboard");
 }
 
 //______________________
@@ -279,23 +491,29 @@ void CWpUIBaseEm::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, bool
 
 void CWpUIBaseEm::OnMouse_Move(sScreenPos sNewPos) {
     // Override
+    WpUI_ToConsoleEm("CWpUIBaseEm::OnMouse_Move");
 }
 void CWpUIBaseEm::OnMouse_Click(eWpMouseButton eButton, bool bDown, sScreenPos sMousePos) {
     // Override
     // if bDown = false then button is going UP.
+    WpUI_ToConsoleEm("CWpUIBaseEm::OnMouse_Click");
 }
 
 void CWpUIBaseEm::OnMouse_DoubleClick(eWpMouseButton, sScreenPos sPos) {
     // Override
+    WpUI_ToConsoleEm("CWpUIBaseEm::OnMouse_DoubleClick");
 }
 void CWpUIBaseEm::OnMouse_Wheel(float fDx, float fDy) {
     // Override
+    WpUI_ToConsoleEm("CWpUIBaseEm::OnMouse_Wheel");
 }
 void CWpUIBaseEm::OnMouse_EnterWin(sScreenPos sPos) {
     // Override
+    WpUI_ToConsoleEm("CWpUIBaseEm::OnMouse_EnterWin");
 }
 void CWpUIBaseEm::OnMouse_LeaveWin(sScreenPos sPos) {
     // Override
+    WpUI_ToConsoleEm("CWpUIBaseEm::OnMouse_LeaveWin");
 }
 
 //_______________________
@@ -303,20 +521,25 @@ void CWpUIBaseEm::OnMouse_LeaveWin(sScreenPos sPos) {
 
 void CWpUIBaseEm::OnWin_Resize(int iNewH, int iNewW) {
     // Send new size to console, use WpWinGetsize()
+    WpUI_ToConsoleEm("CWpUIBaseEm::OnWin_Resize");
 }
 void CWpUIBaseEm::OnWin_Minimized() {
     // Override
+    WpUI_ToConsoleEm("CWpUIBaseEm::OnWin_Minimized");
 }
 void CWpUIBaseEm::OnWin_Maximized() {
     // Override
+    WpUI_ToConsoleEm("CWpUIBaseEm::OnWin_Maximized");
 }
 void CWpUIBaseEm::OnWin_Regular() { // size back to regular from min or max
     // Override
+    WpUI_ToConsoleEm("CWpUIBaseEm::OnWin_Regular");
 }
 
 void CWpUIBaseEm::OnWin_FocusChange(bool bFocusGained) {
     // if false then focus was lost from this window.
     // Override
+    WpUI_ToConsoleEm("CWpUIBaseEm::OnWin_FocusChange");
 }
 
 //________________________________

@@ -7,16 +7,34 @@
 struct sScreenPos {
     int iXpos;
     int iYpos;
+    sScreenPos() {
+        iXpos = 0;
+        iYpos = 0;
+    }
+    sScreenPos(int x, int y) {
+        iXpos = x;
+        iYpos = y;
+    }
 };
 
 // screen position
 struct sWinSize {
-    int iH;
     int iW;
+    int iH;
+    sWinSize() {
+        iW = 0;
+        iH = 0;
+    }
+    sWinSize (int w, int h) {
+        iW = w;
+        iH = h;
+    }
 };
 
 enum eWpMouseButton {
-
+    LeftButton,
+    MiddleButton,
+    RightButton
 };
 
 enum eWpCurserType {

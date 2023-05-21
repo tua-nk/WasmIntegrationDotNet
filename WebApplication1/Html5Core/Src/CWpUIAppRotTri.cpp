@@ -2,9 +2,7 @@
 
 bool color = false;
 
-CWpUIAppRotTri::CWpUIAppRotTri()
-{
-    
+CWpUIAppRotTri::CWpUIAppRotTri() {
 }
 
 // Application specific implimentations of UI events and functions
@@ -35,10 +33,8 @@ void CWpUIAppRotTri::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, b
 
 void CWpUIAppRotTri::OnMouse_Move(sScreenPos sNewPos)
 {
-    // move centre of rotating Triangle
 }
 
 void CWpUIAppRotTri::OnRenderAnimate()
 {
-    // Call OpenGL draw code
 }
