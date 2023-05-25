@@ -17,16 +17,18 @@ const char* emscripten_result_to_string(EMSCRIPTEN_RESULT result) {
 }
 
 // Console Output 
-void WpUI_ToConsoleEm(std::string ConOut)
+void ToConsole(std::string ConOut)
 {
     // Send to WASM console
-    printf(ConOut.c_str());
+    //printf(ConOut.c_str());
+    std::cout << ConOut << std::endl;
 }
 
 void ToError(char* pztsError)
 {
     // Send to WASM console
-    printf(pztsError);
+    //printf(pztsError);
+    std::cout << pztsError << std::endl;
 }
 
 //========================================================================================================
@@ -57,11 +59,11 @@ EM_BOOL em_key_callback(int eventType, const EmscriptenKeyboardEvent* e, void* u
 
 EM_BOOL em_mouse_callback(int eventType, const EmscriptenMouseEvent* e, void* userData)
 {
-    printf("%s, screen: (%ld,%ld), client: (%ld,%ld),%s%s%s%s button: %hu, buttons: %hu, movement: (%ld,%ld), canvas: (%ld,%ld), timestamp: %lf\n",
-        emscripten_event_type_to_string(eventType), e->screenX, e->screenY, e->clientX, e->clientY,
-        e->ctrlKey ? " CTRL" : "", e->shiftKey ? " SHIFT" : "", e->altKey ? " ALT" : "", e->metaKey ? " META" : "",
-        e->button, e->buttons, e->movementX, e->movementY, e->canvasX, e->canvasY,
-        e->timestamp);
+    //printf("%s, screen: (%ld,%ld), client: (%ld,%ld),%s%s%s%s button: %hu, buttons: %hu, movement: (%ld,%ld), canvas: (%ld,%ld), timestamp: %lf\n",
+    //    emscripten_event_type_to_string(eventType), e->screenX, e->screenY, e->clientX, e->clientY,
+    //    e->ctrlKey ? " CTRL" : "", e->shiftKey ? " SHIFT" : "", e->altKey ? " ALT" : "", e->metaKey ? " META" : "",
+    //    e->button, e->buttons, e->movementX, e->movementY, e->canvasX, e->canvasY,
+    //    e->timestamp);
 
     // Translation of emscripten params to "Warp params"...
     sScreenPos sNewPos(e->screenX, e->screenY);
@@ -90,22 +92,18 @@ EM_BOOL em_mouse_callback(int eventType, const EmscriptenMouseEvent* e, void* us
             pWpUIEm->OnMouse_DoubleClick((eWpMouseButton)e->button, sNewPos);
             break;
         }
-        case EMSCRIPTEN_EVENT_WHEEL:
-        {
-            //virtual void OnMouse_Wheel(float fDx, float fDy);
-            break;
-        }
-        case EMSCRIPTEN_EVENT_MOUSEENTER:
+        case EMSCRIPTEN_EVENT_MOUSEOVER:
         {
             pWpUIEm->OnMouse_EnterWin(sNewPos);
             break;
         }
-        case EMSCRIPTEN_EVENT_MOUSELEAVE:
+        case EMSCRIPTEN_EVENT_MOUSEOUT:
         {
             pWpUIEm->OnMouse_LeaveWin(sNewPos);
             break;
         }
         default:
+            std::cout << eventType << std:: endl;
             break;
         }
     }
@@ -115,12 +113,14 @@ EM_BOOL em_mouse_callback(int eventType, const EmscriptenMouseEvent* e, void* us
 
 EM_BOOL em_wheel_callback(int eventType, const EmscriptenWheelEvent* e, void* userData)
 {
-    printf("%s, screen: (%ld,%ld), client: (%ld,%ld),%s%s%s%s button: %hu, buttons: %hu, canvas: (%ld,%ld), delta:(%g,%g,%g), deltaMode:%lu, timestamp: %lf\n",
-        emscripten_event_type_to_string(eventType), e->mouse.screenX, e->mouse.screenY, e->mouse.clientX, e->mouse.clientY,
-        e->mouse.ctrlKey ? " CTRL" : "", e->mouse.shiftKey ? " SHIFT" : "", e->mouse.altKey ? " ALT" : "", e->mouse.metaKey ? " META" : "",
-        e->mouse.button, e->mouse.buttons, e->mouse.canvasX, e->mouse.canvasY,
-        (float)e->deltaX, (float)e->deltaY, (float)e->deltaZ, e->deltaMode,
-        e->mouse.timestamp);
+    //printf("%s, screen: (%ld,%ld), client: (%ld,%ld),%s%s%s%s button: %hu, buttons: %hu, canvas: (%ld,%ld), delta:(%g,%g,%g), deltaMode:%lu, timestamp: %lf\n",
+    //    emscripten_event_type_to_string(eventType), e->mouse.screenX, e->mouse.screenY, e->mouse.clientX, e->mouse.clientY,
+    //    e->mouse.ctrlKey ? " CTRL" : "", e->mouse.shiftKey ? " SHIFT" : "", e->mouse.altKey ? " ALT" : "", e->mouse.metaKey ? " META" : "",
+    //    e->mouse.button, e->mouse.buttons, e->mouse.canvasX, e->mouse.canvasY,
+    //    (float)e->deltaX, (float)e->deltaY, (float)e->deltaZ, e->deltaMode,
+    //    e->mouse.timestamp);
+
+    pWpUIEm->OnMouse_Wheel((float)e->deltaX, (float)e->deltaY);
 
     return 0;
 }
@@ -483,7 +483,7 @@ void CWpUIBaseEm::OnRenderAnimate()
 void CWpUIBaseEm::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, bool bCtrl, bool bFn) {
     // if bDown = false then key is going UP.
     // Override to handle keyboard events
-    WpUI_ToConsoleEm("CWpUIBaseEm::OnKeyboard");
+    ToConsole("CWpUIBaseEm::OnKeyboard");
 }
 
 //______________________
@@ -491,29 +491,29 @@ void CWpUIBaseEm::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, bool
 
 void CWpUIBaseEm::OnMouse_Move(sScreenPos sNewPos) {
     // Override
-    WpUI_ToConsoleEm("CWpUIBaseEm::OnMouse_Move");
+    ToConsole("CWpUIBaseEm::OnMouse_Move");
 }
 void CWpUIBaseEm::OnMouse_Click(eWpMouseButton eButton, bool bDown, sScreenPos sMousePos) {
     // Override
     // if bDown = false then button is going UP.
-    WpUI_ToConsoleEm("CWpUIBaseEm::OnMouse_Click");
+    ToConsole("CWpUIBaseEm::OnMouse_Click");
 }
 
 void CWpUIBaseEm::OnMouse_DoubleClick(eWpMouseButton, sScreenPos sPos) {
     // Override
-    WpUI_ToConsoleEm("CWpUIBaseEm::OnMouse_DoubleClick");
+    ToConsole("CWpUIBaseEm::OnMouse_DoubleClick");
 }
 void CWpUIBaseEm::OnMouse_Wheel(float fDx, float fDy) {
     // Override
-    WpUI_ToConsoleEm("CWpUIBaseEm::OnMouse_Wheel");
+    ToConsole("CWpUIBaseEm::OnMouse_Wheel");
 }
 void CWpUIBaseEm::OnMouse_EnterWin(sScreenPos sPos) {
     // Override
-    WpUI_ToConsoleEm("CWpUIBaseEm::OnMouse_EnterWin");
+    ToConsole("CWpUIBaseEm::OnMouse_EnterWin");
 }
 void CWpUIBaseEm::OnMouse_LeaveWin(sScreenPos sPos) {
     // Override
-    WpUI_ToConsoleEm("CWpUIBaseEm::OnMouse_LeaveWin");
+    ToConsole("CWpUIBaseEm::OnMouse_LeaveWin");
 }
 
 //_______________________
@@ -521,25 +521,25 @@ void CWpUIBaseEm::OnMouse_LeaveWin(sScreenPos sPos) {
 
 void CWpUIBaseEm::OnWin_Resize(int iNewH, int iNewW) {
     // Send new size to console, use WpWinGetsize()
-    WpUI_ToConsoleEm("CWpUIBaseEm::OnWin_Resize");
+    ToConsole("CWpUIBaseEm::OnWin_Resize");
 }
 void CWpUIBaseEm::OnWin_Minimized() {
     // Override
-    WpUI_ToConsoleEm("CWpUIBaseEm::OnWin_Minimized");
+    ToConsole("CWpUIBaseEm::OnWin_Minimized");
 }
 void CWpUIBaseEm::OnWin_Maximized() {
     // Override
-    WpUI_ToConsoleEm("CWpUIBaseEm::OnWin_Maximized");
+    ToConsole("CWpUIBaseEm::OnWin_Maximized");
 }
 void CWpUIBaseEm::OnWin_Regular() { // size back to regular from min or max
     // Override
-    WpUI_ToConsoleEm("CWpUIBaseEm::OnWin_Regular");
+    ToConsole("CWpUIBaseEm::OnWin_Regular");
 }
 
 void CWpUIBaseEm::OnWin_FocusChange(bool bFocusGained) {
     // if false then focus was lost from this window.
     // Override
-    WpUI_ToConsoleEm("CWpUIBaseEm::OnWin_FocusChange");
+    ToConsole("CWpUIBaseEm::OnWin_FocusChange");
 }
 
 //________________________________

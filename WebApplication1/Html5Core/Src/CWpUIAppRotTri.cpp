@@ -169,29 +169,29 @@ void CWpUIAppRotTri::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, b
 
 void CWpUIAppRotTri::OnMouse_Move(sScreenPos sNewPos) {
     // Override
-    WpUI_ToConsoleEm("CWpUIAppRotTri::OnMouse_Move");
+    //ToConsole("CWpUIAppRotTri::OnMouse_Move");
 }
 void CWpUIAppRotTri::OnMouse_Click(eWpMouseButton eButton, bool bDown, sScreenPos sMousePos) {
     // Override
     // if bDown = false then button is going UP.
-    WpUI_ToConsoleEm("CWpUIAppRotTri::OnMouse_Click");
+    ToConsole("CWpUIAppRotTri::OnMouse_Click");
 }
 
 void CWpUIAppRotTri::OnMouse_DoubleClick(eWpMouseButton, sScreenPos sPos) {
     // Override
-    WpUI_ToConsoleEm("CWpUIAppRotTri::OnMouse_DoubleClick");
+    ToConsole("CWpUIAppRotTri::OnMouse_DoubleClick");
 }
 void CWpUIAppRotTri::OnMouse_Wheel(float fDx, float fDy) {
     // Override
-    WpUI_ToConsoleEm("CWpUIAppRotTri::OnMouse_Wheel");
+    ToConsole("CWpUIAppRotTri::OnMouse_Wheel");
 }
 void CWpUIAppRotTri::OnMouse_EnterWin(sScreenPos sPos) {
     // Override
-    WpUI_ToConsoleEm("CWpUIAppRotTri::OnMouse_EnterWin");
+    ToConsole("CWpUIAppRotTri::OnMouse_EnterWin");
 }
 void CWpUIAppRotTri::OnMouse_LeaveWin(sScreenPos sPos) {
     // Override
-    WpUI_ToConsoleEm("CWpUIAppRotTri::OnMouse_LeaveWin");
+    ToConsole("CWpUIAppRotTri::OnMouse_LeaveWin");
 }
 
 //_______________________
@@ -199,25 +199,25 @@ void CWpUIAppRotTri::OnMouse_LeaveWin(sScreenPos sPos) {
 
 void CWpUIAppRotTri::OnWin_Resize(int iNewH, int iNewW) {
     // Send new size to console, use WpWinGetsize()
-    WpUI_ToConsoleEm("CWpUIAppRotTri::OnWin_Resize");
+    ToConsole("CWpUIAppRotTri::OnWin_Resize");
 }
 void CWpUIAppRotTri::OnWin_Minimized() {
     // Override
-    WpUI_ToConsoleEm("CWpUIAppRotTri::OnWin_Minimized");
+    ToConsole("CWpUIAppRotTri::OnWin_Minimized");
 }
 void CWpUIAppRotTri::OnWin_Maximized() {
     // Override
-    WpUI_ToConsoleEm("CWpUIAppRotTri::OnWin_Maximized");
+    ToConsole("CWpUIAppRotTri::OnWin_Maximized");
 }
 void CWpUIAppRotTri::OnWin_Regular() { // size back to regular from min or max
     // Override
-    WpUI_ToConsoleEm("CWpUIAppRotTri::OnWin_Regular");
+    ToConsole("CWpUIAppRotTri::OnWin_Regular");
 }
 
 void CWpUIAppRotTri::OnWin_FocusChange(bool bFocusGained) {
     // if false then focus was lost from this window.
     // Override
-    WpUI_ToConsoleEm("CWpUIAppRotTri::OnWin_FocusChange");
+    ToConsole("CWpUIAppRotTri::OnWin_FocusChange");
 }
 
 //________________________________

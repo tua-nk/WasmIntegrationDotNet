@@ -24,7 +24,7 @@ const char* emscripten_result_to_string(EMSCRIPTEN_RESULT result);
 #define TEST_RESULT(x) if (ret != EMSCRIPTEN_RESULT_SUCCESS) printf("%s returned %s.\n", #x, emscripten_result_to_string(ret));
 
 // Console Output 
-void WpUI_ToConsoleEm(std::string ConOut);
+void ToConsole(std::string ConOut);
 void ToError(char* pztsError);
 
 //========================================================================================================
