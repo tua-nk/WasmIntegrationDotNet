@@ -156,12 +156,34 @@ void CWpUIAppRotTri::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, b
             Win_SetTitle(std::string("New Warp Title"));
             break;
         }
+        case 'y':
+        {
+            Win_GetTitle();
+            break;
+        }
+        case 'u':
+        {
+            Win_SetSize(800, 600);
+            break;
+        }
+        case 'i':
+        {
+            Win_GetSize();
+            break;
+        }
         //...ETC.
 
         default:
             break;
         }
     }
+
+    //virtual void Win_SetTitle(std::string strTitle);
+    //virtual std::string Win_GetTitle();
+
+    //virtual void Win_SetFocus();
+    //virtual void Win_SetSize(int iWidth, int iHeight);
+    //virtual sWinSize Win_GetSize();
 }
 
 //______________________
@@ -169,17 +191,17 @@ void CWpUIAppRotTri::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, b
 
 void CWpUIAppRotTri::OnMouse_Move(sScreenPos sNewPos) {
     // Override
-    //ToConsole("CWpUIAppRotTri::OnMouse_Move");
+    //ToConsole("CWpUIAppRotTri::OnMouse_Move", sNewPos);
 }
 void CWpUIAppRotTri::OnMouse_Click(eWpMouseButton eButton, bool bDown, sScreenPos sMousePos) {
     // Override
     // if bDown = false then button is going UP.
-    ToConsole("CWpUIAppRotTri::OnMouse_Click");
+    ToConsole("CWpUIAppRotTri::OnMouse_Click", sMousePos);
 }
 
 void CWpUIAppRotTri::OnMouse_DoubleClick(eWpMouseButton, sScreenPos sPos) {
     // Override
-    ToConsole("CWpUIAppRotTri::OnMouse_DoubleClick");
+    ToConsole("CWpUIAppRotTri::OnMouse_DoubleClick", sPos);
 }
 void CWpUIAppRotTri::OnMouse_Wheel(float fDx, float fDy) {
     // Override
@@ -187,11 +209,21 @@ void CWpUIAppRotTri::OnMouse_Wheel(float fDx, float fDy) {
 }
 void CWpUIAppRotTri::OnMouse_EnterWin(sScreenPos sPos) {
     // Override
-    ToConsole("CWpUIAppRotTri::OnMouse_EnterWin");
+    ToConsole("CWpUIAppRotTri::OnMouse_EnterWin", sPos);
 }
 void CWpUIAppRotTri::OnMouse_LeaveWin(sScreenPos sPos) {
     // Override
-    ToConsole("CWpUIAppRotTri::OnMouse_LeaveWin");
+    ToConsole("CWpUIAppRotTri::OnMouse_LeaveWin", sPos);
+}
+void CWpUIAppRotTri::OnMouse_Over(sScreenPos sPos)
+{
+    // Override
+    ToConsole("CWpUIAppRotTri::OnMouse_Over", sPos);
+}
+void CWpUIAppRotTri::OnMouse_Out(sScreenPos sPos)
+{
+    // Override
+    ToConsole("CWpUIAppRotTri::OnMouse_Out", sPos);
 }
 
 //_______________________
@@ -199,7 +231,7 @@ void CWpUIAppRotTri::OnMouse_LeaveWin(sScreenPos sPos) {
 
 void CWpUIAppRotTri::OnWin_Resize(int iNewH, int iNewW) {
     // Send new size to console, use WpWinGetsize()
-    ToConsole("CWpUIAppRotTri::OnWin_Resize");
+    ToConsole("CWpUIAppRotTri::OnWin_Resize", iNewW, iNewH);
 }
 void CWpUIAppRotTri::OnWin_Minimized() {
     // Override
@@ -213,7 +245,6 @@ void CWpUIAppRotTri::OnWin_Regular() { // size back to regular from min or max
     // Override
     ToConsole("CWpUIAppRotTri::OnWin_Regular");
 }
-
 void CWpUIAppRotTri::OnWin_FocusChange(bool bFocusGained) {
     // if false then focus was lost from this window.
     // Override
@@ -240,23 +271,33 @@ void CWpUIAppRotTri::OnDropText(std::string strText, sScreenPos MousePos) {
 //___________
 // WINDOW API
 void CWpUIAppRotTri::Win_SetTitle(std::string strTitle) {
+    ToConsole("CWpUIAppRotTri::Win_SetTitle");
     // Emscripten specific code to Set the window tittle
     CWpUIBaseEm::Win_SetTitle(strTitle);
 }
 std::string CWpUIAppRotTri::Win_GetTitle() {
+    ToConsole("CWpUIAppRotTri::Win_GetTitle");
     // Emscripten specific code to Set the window tittle
-    return CWpUIBaseEm::Win_GetTitle();
+    std::string s = CWpUIBaseEm::Win_GetTitle();
+    ToConsole(s);
+    return s;
 }
 
 void CWpUIAppRotTri::Win_SetFocus() {
+    ToConsole("CWpUIAppRotTri::Win_SetFocus");
     // platform specific code to Set(force?) the focus to this window
 }
-void CWpUIAppRotTri::Win_SetSize(int iHeight, int iWidth) {
+void CWpUIAppRotTri::Win_SetSize(int iWidth, int iHeight) {
+    ToConsole("CWpUIAppRotTri::Win_SetSize", iWidth, iHeight);
     // platform specific code to Set the window size explicitly
+    CWpUIBaseEm::Win_SetSize(iWidth, iHeight);
 }
 sWinSize CWpUIAppRotTri::Win_GetSize() {
+    ToConsole("CWpUIAppRotTri::Win_GetSize");
+    sWinSize s = CWpUIBaseEm::Win_GetSize();
+    ToConsole("CWpUIAppRotTri::Win_GetSize", s.iW, s.iH);
     // platform specific code to Get the window size. send to console
-    return sWinSize();
+    return s;
 }
 
 //__________

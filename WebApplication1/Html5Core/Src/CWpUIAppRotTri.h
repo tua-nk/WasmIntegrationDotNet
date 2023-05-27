@@ -29,10 +29,12 @@ public:
     virtual void OnMouse_Wheel(float fDx, float fDy);
     virtual void OnMouse_EnterWin(sScreenPos sPos);
     virtual void OnMouse_LeaveWin(sScreenPos sPos);
+    virtual void OnMouse_Over(sScreenPos sPos);
+    virtual void OnMouse_Out(sScreenPos sPos);
 
     //_______________________
     // WINDOW EVENT CALLBACKS
-    virtual void OnWin_Resize(int iNewH, int iNewW);
+    virtual void OnWin_Resize(int iNewW, int iNewH);
     virtual void OnWin_Minimized();
     virtual void OnWin_Maximized();
     virtual void OnWin_Regular();

@@ -57,6 +57,14 @@ void CWpUIBase::OnMouse_EnterWin(sScreenPos sPos) {
 void CWpUIBase::OnMouse_LeaveWin(sScreenPos sPos) {
     // Override
 }
+void CWpUIBase::OnMouse_Over(sScreenPos sPos)
+{
+    // Override
+}
+void CWpUIBase::OnMouse_Out(sScreenPos sPos)
+{
+    // Override
+}
 
 //_______________________
 // WINDOW EVENT CALLBACKS
@@ -109,7 +117,7 @@ std::string CWpUIBase::Win_GetTitle() {
 void CWpUIBase::Win_SetFocus() {
     // platform specific code to Set(force?) the focus to this window
 }
-void CWpUIBase::Win_SetSize(int iHeight, int iWidth) {
+void CWpUIBase::Win_SetSize(int iWidth, int iHeight) {
     // platform specific code to Set the window size explicitly
 }
 sWinSize CWpUIBase::Win_GetSize() {

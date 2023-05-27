@@ -24,6 +24,18 @@ void ToConsole(std::string ConOut)
     std::cout << ConOut << std::endl;
 }
 
+void ToConsole(std::string ConOut, sScreenPos sPos)
+{
+    std::string str = ConOut + "(" + std::to_string(sPos.iXpos) + ", " + std::to_string(sPos.iYpos) + ")";
+    ToConsole(str);
+}
+
+void ToConsole(std::string ConOut, int x, int y)
+{
+    std::string str = ConOut + "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
+    ToConsole(str);
+}
+
 void ToError(char* pztsError)
 {
     // Send to WASM console
@@ -70,9 +82,6 @@ EM_BOOL em_mouse_callback(int eventType, const EmscriptenMouseEvent* e, void* us
     bool bDown = eventType == EMSCRIPTEN_EVENT_MOUSEDOWN ? true : false;
 
     // Call Warp base class equivalent func
-    if (pWpUIEm != NULL) pWpUIEm->OnMouse_Move(sNewPos);
-    else ToError("em_mouse_callback");
-
     if (pWpUIEm != NULL)
     {
         switch (eventType)
@@ -92,14 +101,24 @@ EM_BOOL em_mouse_callback(int eventType, const EmscriptenMouseEvent* e, void* us
             pWpUIEm->OnMouse_DoubleClick((eWpMouseButton)e->button, sNewPos);
             break;
         }
-        case EMSCRIPTEN_EVENT_MOUSEOVER:
+        case EMSCRIPTEN_EVENT_MOUSEENTER:
         {
             pWpUIEm->OnMouse_EnterWin(sNewPos);
             break;
         }
-        case EMSCRIPTEN_EVENT_MOUSEOUT:
+        case EMSCRIPTEN_EVENT_MOUSELEAVE:
         {
             pWpUIEm->OnMouse_LeaveWin(sNewPos);
+            break;
+        }
+        case EMSCRIPTEN_EVENT_MOUSEOVER:
+        {
+            pWpUIEm->OnMouse_Over(sNewPos);
+            break;
+        }
+        case EMSCRIPTEN_EVENT_MOUSEOUT:
+        {
+            pWpUIEm->OnMouse_Out(sNewPos);
             break;
         }
         default:
@@ -107,6 +126,7 @@ EM_BOOL em_mouse_callback(int eventType, const EmscriptenMouseEvent* e, void* us
             break;
         }
     }
+    else ToError("em_mouse_callback");
 
     return 0;
 }
@@ -120,7 +140,8 @@ EM_BOOL em_wheel_callback(int eventType, const EmscriptenWheelEvent* e, void* us
     //    (float)e->deltaX, (float)e->deltaY, (float)e->deltaZ, e->deltaMode,
     //    e->mouse.timestamp);
 
-    pWpUIEm->OnMouse_Wheel((float)e->deltaX, (float)e->deltaY);
+    if (pWpUIEm != NULL) pWpUIEm->OnMouse_Wheel((float)e->deltaX, (float)e->deltaY);
+    else ToError("em_wheel_callback");
 
     return 0;
 }
@@ -131,12 +152,38 @@ EM_BOOL em_uievent_callback(int eventType, const EmscriptenUiEvent* e, void* use
         emscripten_event_type_to_string(eventType), e->detail, e->documentBodyClientWidth, e->documentBodyClientHeight,
         e->windowInnerWidth, e->windowInnerHeight, e->scrollTop, e->scrollLeft);
 
+    // Call Warp base class equivalent func
+    if (pWpUIEm != NULL)
+    {
+        switch (eventType)
+        {
+        case EMSCRIPTEN_EVENT_RESIZE:
+        {
+            pWpUIEm->OnWin_Resize(e->windowInnerWidth, e->windowInnerHeight);
+            break;
+        }
+        default:
+            std::cout << "----------" << eventType << std::endl;
+            break;
+        }
+    }
+    else ToError("em_mouse_callback");
+
     return 0;
 }
 
 EM_BOOL em_focusevent_callback(int eventType, const EmscriptenFocusEvent* e, void* userData)
 {
     printf("%s, nodeName: \"%s\", id: \"%s\"\n", emscripten_event_type_to_string(eventType), e->nodeName, e->id[0] == '\0' ? "(empty string)" : e->id);
+
+    bool bFocusGained = eventType == EMSCRIPTEN_EVENT_FOCUS? true: false;
+
+    // Call Warp base class equivalent func
+    if (pWpUIEm != NULL)
+    {
+        pWpUIEm->OnWin_FocusChange(bFocusGained);
+    }
+    else ToError("em_focusevent_callback");
 
     return 0;
 }
@@ -188,6 +235,16 @@ EM_BOOL em_pointerlockchange_callback(int eventType, const EmscriptenPointerlock
 EM_BOOL em_visibilitychange_callback(int eventType, const EmscriptenVisibilityChangeEvent* e, void* userData)
 {
     printf("%s, hidden: %d, visibilityState: %d\n", emscripten_event_type_to_string(eventType), e->hidden, e->visibilityState);
+
+    // Call Warp base class equivalent func
+    if (pWpUIEm != NULL)
+    {
+        if (e->hidden)
+        {
+            pWpUIEm->OnWin_Minimized();
+        }
+    }
+    else ToError("em_visibilitychange_callback");
 
     return 0;
 }
@@ -498,14 +555,13 @@ void CWpUIBaseEm::OnMouse_Click(eWpMouseButton eButton, bool bDown, sScreenPos s
     // if bDown = false then button is going UP.
     ToConsole("CWpUIBaseEm::OnMouse_Click");
 }
-
 void CWpUIBaseEm::OnMouse_DoubleClick(eWpMouseButton, sScreenPos sPos) {
     // Override
     ToConsole("CWpUIBaseEm::OnMouse_DoubleClick");
 }
 void CWpUIBaseEm::OnMouse_Wheel(float fDx, float fDy) {
     // Override
-    ToConsole("CWpUIBaseEm::OnMouse_Wheel");
+    ToConsole("CWpUIBaseEm::OnMouse_Wheel", fDx, fDy);
 }
 void CWpUIBaseEm::OnMouse_EnterWin(sScreenPos sPos) {
     // Override
@@ -514,6 +570,16 @@ void CWpUIBaseEm::OnMouse_EnterWin(sScreenPos sPos) {
 void CWpUIBaseEm::OnMouse_LeaveWin(sScreenPos sPos) {
     // Override
     ToConsole("CWpUIBaseEm::OnMouse_LeaveWin");
+}
+void CWpUIBaseEm::OnMouse_Over(sScreenPos sPos)
+{
+    // Override
+    ToConsole("CWpUIBaseEm::OnMouse_Over");
+}
+void CWpUIBaseEm::OnMouse_Out(sScreenPos sPos)
+{
+    // Override
+    ToConsole("CWpUIBaseEm::OnMouse_Out");
 }
 
 //_______________________
@@ -574,12 +640,15 @@ std::string CWpUIBaseEm::Win_GetTitle() {
 void CWpUIBaseEm::Win_SetFocus() {
     // platform specific code to Set(force?) the focus to this window
 }
-void CWpUIBaseEm::Win_SetSize(int iHeight, int iWidth) {
+void CWpUIBaseEm::Win_SetSize(int iWidth, int iHeight) {
     // platform specific code to Set the window size explicitly
+    emscripten_set_canvas_element_size("#canvas", iWidth, iHeight);
 }
 sWinSize CWpUIBaseEm::Win_GetSize() {
     // platform specific code to Get the window size. send to console
-    return sWinSize();
+    int width, height;
+    emscripten_get_canvas_element_size("#canvas", &width, &height);
+    return sWinSize(width, height);
 }
 
 //__________
