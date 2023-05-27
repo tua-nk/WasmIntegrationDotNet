@@ -4927,6 +4927,18 @@ function dbg(text) {
       return _emscripten_get_window_title.buffer;
     }
 
+  function _emscripten_hide_mouse() {
+      var styleSheet = document.styleSheets[0];
+      var rules = styleSheet.cssRules;
+      for (var i = 0; i < rules.length; i++) {
+        if (rules[i].cssText.substr(0, 6) == 'canvas') {
+          styleSheet.deleteRule(i);
+          i--;
+        }
+      }
+      styleSheet.insertRule('canvas.emscripten { border: 1px solid black; cursor: none; }', 0);
+    }
+
   function _emscripten_lock_orientation(allowedOrientations) {
       var orientations = [];
       if (allowedOrientations & 1) orientations.push("portrait-primary");
@@ -7420,6 +7432,7 @@ var wasmImports = {
   "emscripten_get_screen_size": _emscripten_get_screen_size,
   "emscripten_get_visibility_status": _emscripten_get_visibility_status,
   "emscripten_get_window_title": _emscripten_get_window_title,
+  "emscripten_hide_mouse": _emscripten_hide_mouse,
   "emscripten_lock_orientation": _emscripten_lock_orientation,
   "emscripten_memcpy_big": _emscripten_memcpy_big,
   "emscripten_request_fullscreen": _emscripten_request_fullscreen,

@@ -171,19 +171,38 @@ void CWpUIAppRotTri::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, b
             Win_GetSize();
             break;
         }
+
+        case 'q':
+        {
+            Mouse_PosGet();
+            break;
+        }
+        case 'w':
+        {
+            Mouse_PosSet(sScreenPos(400, 300));
+            break;
+        }
+        case 'e':
+        {
+            Mouse_CurserShow();
+            break;
+        }
+        case 'r':
+        {
+            Mouse_CurserHide();
+            break;
+        }
+        case 'o':
+        {
+            Mouse_CurserSet(eWpCurserType::eWpCurser_Arrow);
+            break;
+        }
         //...ETC.
 
         default:
             break;
         }
     }
-
-    //virtual void Win_SetTitle(std::string strTitle);
-    //virtual std::string Win_GetTitle();
-
-    //virtual void Win_SetFocus();
-    //virtual void Win_SetSize(int iWidth, int iHeight);
-    //virtual sWinSize Win_GetSize();
 }
 
 //______________________
