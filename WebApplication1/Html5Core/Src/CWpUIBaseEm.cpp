@@ -71,11 +71,11 @@ EM_BOOL em_key_callback(int eventType, const EmscriptenKeyboardEvent* e, void* u
 
 EM_BOOL em_mouse_callback(int eventType, const EmscriptenMouseEvent* e, void* userData)
 {
-    //printf("%s, screen: (%ld,%ld), client: (%ld,%ld),%s%s%s%s button: %hu, buttons: %hu, movement: (%ld,%ld), canvas: (%ld,%ld), timestamp: %lf\n",
-    //    emscripten_event_type_to_string(eventType), e->screenX, e->screenY, e->clientX, e->clientY,
-    //    e->ctrlKey ? " CTRL" : "", e->shiftKey ? " SHIFT" : "", e->altKey ? " ALT" : "", e->metaKey ? " META" : "",
-    //    e->button, e->buttons, e->movementX, e->movementY, e->canvasX, e->canvasY,
-    //    e->timestamp);
+    printf("%s, screen: (%ld,%ld), client: (%ld,%ld),%s%s%s%s button: %hu, buttons: %hu, movement: (%ld,%ld), canvas: (%ld,%ld), timestamp: %lf\n",
+        emscripten_event_type_to_string(eventType), e->screenX, e->screenY, e->clientX, e->clientY,
+        e->ctrlKey ? " CTRL" : "", e->shiftKey ? " SHIFT" : "", e->altKey ? " ALT" : "", e->metaKey ? " META" : "",
+        e->button, e->buttons, e->movementX, e->movementY, e->canvasX, e->canvasY,
+        e->timestamp);
 
     // Translation of emscripten params to "Warp params"...
     sScreenPos sNewPos(e->screenX, e->screenY);
@@ -133,12 +133,12 @@ EM_BOOL em_mouse_callback(int eventType, const EmscriptenMouseEvent* e, void* us
 
 EM_BOOL em_wheel_callback(int eventType, const EmscriptenWheelEvent* e, void* userData)
 {
-    //printf("%s, screen: (%ld,%ld), client: (%ld,%ld),%s%s%s%s button: %hu, buttons: %hu, canvas: (%ld,%ld), delta:(%g,%g,%g), deltaMode:%lu, timestamp: %lf\n",
-    //    emscripten_event_type_to_string(eventType), e->mouse.screenX, e->mouse.screenY, e->mouse.clientX, e->mouse.clientY,
-    //    e->mouse.ctrlKey ? " CTRL" : "", e->mouse.shiftKey ? " SHIFT" : "", e->mouse.altKey ? " ALT" : "", e->mouse.metaKey ? " META" : "",
-    //    e->mouse.button, e->mouse.buttons, e->mouse.canvasX, e->mouse.canvasY,
-    //    (float)e->deltaX, (float)e->deltaY, (float)e->deltaZ, e->deltaMode,
-    //    e->mouse.timestamp);
+    printf("%s, screen: (%ld,%ld), client: (%ld,%ld),%s%s%s%s button: %hu, buttons: %hu, canvas: (%ld,%ld), delta:(%g,%g,%g), deltaMode:%lu, timestamp: %lf\n",
+        emscripten_event_type_to_string(eventType), e->mouse.screenX, e->mouse.screenY, e->mouse.clientX, e->mouse.clientY,
+        e->mouse.ctrlKey ? " CTRL" : "", e->mouse.shiftKey ? " SHIFT" : "", e->mouse.altKey ? " ALT" : "", e->mouse.metaKey ? " META" : "",
+        e->mouse.button, e->mouse.buttons, e->mouse.canvasX, e->mouse.canvasY,
+        (float)e->deltaX, (float)e->deltaY, (float)e->deltaZ, e->deltaMode,
+        e->mouse.timestamp);
 
     if (pWpUIEm != NULL) pWpUIEm->OnMouse_Wheel((float)e->deltaX, (float)e->deltaY);
     else ToError("em_wheel_callback");
