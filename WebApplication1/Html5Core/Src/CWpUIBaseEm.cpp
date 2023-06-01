@@ -159,6 +159,19 @@ EM_BOOL em_uievent_callback(int eventType, const EmscriptenUiEvent* e, void* use
         {
         case EMSCRIPTEN_EVENT_RESIZE:
         {
+
+            EmscriptenFullscreenChangeEvent fsce;
+            EMSCRIPTEN_RESULT ret = emscripten_get_fullscreen_status(&fsce);
+            //TEST_RESULT(emscripten_get_fullscreen_status);
+            if (!fsce.isFullscreen) {
+                pWpUIEm->OnWin_Maximized();
+            }
+
+            if (emscripten_exit_fullscreen())
+            {
+                pWpUIEm->OnWin_Maximized();
+            }
+
             pWpUIEm->OnWin_Resize(e->windowInnerWidth, e->windowInnerHeight);
             break;
         }
@@ -220,6 +233,15 @@ EM_BOOL em_fullscreenchange_callback(int eventType, const EmscriptenFullscreenCh
 {
     printf("%s, isFullscreen: %d, fullscreenEnabled: %d, fs element nodeName: \"%s\", fs element id: \"%s\". New size: %dx%d pixels. Screen size: %dx%d pixels.\n",
         emscripten_event_type_to_string(eventType), e->isFullscreen, e->fullscreenEnabled, e->nodeName, e->id, e->elementWidth, e->elementHeight, e->screenWidth, e->screenHeight);
+
+    // Call Warp base class equivalent func
+    if (pWpUIEm != NULL)
+    {
+        if (e->isFullscreen) {
+            pWpUIEm->OnWin_Maximized();
+        }
+    }
+    else ToError("em_fullscreenchange_callback");
 
     return 0;
 }
@@ -661,18 +683,7 @@ void CWpUIBaseEm::Mouse_PosSet(sScreenPos NewPos) {
     // platform specific code to Set the current mouse position
 }
 void CWpUIBaseEm::Mouse_CurserSet(eWpCurserType eWpNewCurser) {
-    switch (eWpNewCurser) {
-    case eWpCurserType::eWpCurser_Arrow:
-    {
-        // Emscripten specific code to set to new curser type to an "Arrow"
-        break;
-    }
-    case eWpCurserType::eWpCurser_IBeam:
-    {
-        //.etc
-        break;
-    }
-    }
+    // platform specific code to Set the current mouse position
 }
 void CWpUIBaseEm::Mouse_CurserShow() {
     // platform specific code to hide the curser

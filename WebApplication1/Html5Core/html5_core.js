@@ -1001,6 +1001,11 @@ function dbg(text) {
 // end include: runtime_debug.js
 // === Body ===
 
+var ASM_CONSTS = {
+  89388: ($0) => { switch ($0) { case 0: document.body.style.cursor = 'default'; break; case 1: document.body.style.cursor = 'pointer'; break; case 2: document.body.style.cursor = 'wait'; break; default: document.body.style.cursor = 'default'; } }
+};
+
+
 
 // end include: preamble.js
 
@@ -1256,6 +1261,41 @@ function dbg(text) {
 
   function _abort() {
       abort('native code called abort()');
+    }
+
+  var readEmAsmArgsArray = [];
+  function readEmAsmArgs(sigPtr, buf) {
+      // Nobody should have mutated _readEmAsmArgsArray underneath us to be something else than an array.
+      assert(Array.isArray(readEmAsmArgsArray));
+      // The input buffer is allocated on the stack, so it must be stack-aligned.
+      assert(buf % 16 == 0);
+      readEmAsmArgsArray.length = 0;
+      var ch;
+      // Most arguments are i32s, so shift the buffer pointer so it is a plain
+      // index into HEAP32.
+      buf >>= 2;
+      while (ch = HEAPU8[sigPtr++]) {
+        var chr = String.fromCharCode(ch);
+        var validChars = ['d', 'f', 'i'];
+        assert(validChars.includes(chr), 'Invalid character ' + ch + '("' + chr + '") in readEmAsmArgs! Use only [' + validChars + '], and do not specify "v" for void return argument.');
+        // Floats are always passed as doubles, and doubles and int64s take up 8
+        // bytes (two 32-bit slots) in memory, align reads to these:
+        buf += (ch != 105/*i*/) & buf;
+        readEmAsmArgsArray.push(
+          ch == 105/*i*/ ? HEAP32[buf] :
+         HEAPF64[buf++ >> 1]
+        );
+        ++buf;
+      }
+      return readEmAsmArgsArray;
+    }
+  function runEmAsmFunction(code, sigPtr, argbuf) {
+      var args = readEmAsmArgs(sigPtr, argbuf);
+      if (!ASM_CONSTS.hasOwnProperty(code)) abort('No EM_ASM constant found at address ' + code);
+      return ASM_CONSTS[code].apply(null, args);
+    }
+  function _emscripten_asm_const_int(code, sigPtr, argbuf) {
+      return runEmAsmFunction(code, sigPtr, argbuf);
     }
 
   function withStackSave(f) {
@@ -7422,6 +7462,7 @@ var wasmImports = {
   "__assert_fail": ___assert_fail,
   "__cxa_throw": ___cxa_throw,
   "abort": _abort,
+  "emscripten_asm_const_int": _emscripten_asm_const_int,
   "emscripten_exit_fullscreen": _emscripten_exit_fullscreen,
   "emscripten_exit_pointerlock": _emscripten_exit_pointerlock,
   "emscripten_get_battery_status": _emscripten_get_battery_status,
@@ -7596,7 +7637,7 @@ var missingLibrarySymbols = [
   'getCallstack',
   'emscriptenLog',
   'convertPCtoSourceLocation',
-  'readEmAsmArgs',
+  'runMainThreadEmAsm',
   'jstoi_s',
   'listenOnce',
   'autoResumeAudioContext',
@@ -7742,6 +7783,8 @@ var unexportedSymbols = [
   'warnOnce',
   'UNWIND_CACHE',
   'readEmAsmArgsArray',
+  'readEmAsmArgs',
+  'runEmAsmFunction',
   'jstoi_q',
   'getExecutableName',
   'handleException',

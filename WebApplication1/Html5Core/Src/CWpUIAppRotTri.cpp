@@ -194,7 +194,12 @@ void CWpUIAppRotTri::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, b
         }
         case 'o':
         {
-            Mouse_CurserSet(eWpCurserType::eWpCurser_Arrow);
+            Mouse_CurserSet(eWpCurserType::eWpCurser_Wait);
+            break;
+        }
+        case 'p':
+        {
+            Mouse_CurserSet(eWpCurserType::eWpCurser_Default);
             break;
         }
         //...ETC.
@@ -329,18 +334,24 @@ void CWpUIAppRotTri::Mouse_PosSet(sScreenPos NewPos) {
     // platform specific code to Set the current mouse position
 }
 void CWpUIAppRotTri::Mouse_CurserSet(eWpCurserType eWpNewCurser) {
-    switch (eWpNewCurser) {
-    case eWpCurserType::eWpCurser_Arrow:
-    {
-        // Emscripten specific code to set to new curser type to an "Arrow"
-        break;
-    }
-    case eWpCurserType::eWpCurser_IBeam:
-    {
-        //.etc
-        break;
-    }
-    }
+
+    int cursorType = (int)eWpNewCurser;
+    EM_ASM({
+        switch ($0) {
+            case 0:
+                document.body.style.cursor = 'default';
+                break;
+            case 1:
+                document.body.style.cursor = 'pointer';
+                break;
+            case 2:
+                document.body.style.cursor = 'wait';
+                break;
+                // Add more cases here for additional cursor types.
+            default:
+                    document.body.style.cursor = 'default';
+            }
+        }, cursorType);
 }
 void CWpUIAppRotTri::Mouse_CurserShow() {
     // platform specific code to hide the curser

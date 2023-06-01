@@ -38,8 +38,10 @@ enum eWpMouseButton {
 };
 
 enum eWpCurserType {
-    eWpCurser_Arrow,
-    eWpCurser_IBeam
+    eWpCurser_Default,
+    eWpCurser_Pointer,
+    eWpCurser_Wait
+    // ...
 };
 
 class CWpUIBase
