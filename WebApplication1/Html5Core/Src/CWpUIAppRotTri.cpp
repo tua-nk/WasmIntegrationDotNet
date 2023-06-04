@@ -347,17 +347,22 @@ void CWpUIAppRotTri::Mouse_CurserSet(eWpCurserType eWpNewCurser) {
             case 2:
                 document.body.style.cursor = 'wait';
                 break;
+            case 3:
+                document.body.style.cursor = 'none';
+                break;
                 // Add more cases here for additional cursor types.
             default:
-                    document.body.style.cursor = 'default';
+                document.body.style.cursor = 'default';
             }
         }, cursorType);
 }
 void CWpUIAppRotTri::Mouse_CurserShow() {
     // platform specific code to hide the curser
+    Mouse_CurserSet(eWpCurserType::eWpCurser_Default);
 }
 void CWpUIAppRotTri::Mouse_CurserHide() {
     // platform specific code to show the curser
+    Mouse_CurserSet(eWpCurserType::eWpCurser_None);
 }
 
 //______________

@@ -40,7 +40,8 @@ enum eWpMouseButton {
 enum eWpCurserType {
     eWpCurser_Default,
     eWpCurser_Pointer,
-    eWpCurser_Wait
+    eWpCurser_Wait,
+    eWpCurser_None
     // ...
 };
 

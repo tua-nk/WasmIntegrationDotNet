@@ -1002,7 +1002,11 @@ function dbg(text) {
 // === Body ===
 
 var ASM_CONSTS = {
-  89388: ($0) => { switch ($0) { case 0: document.body.style.cursor = 'default'; break; case 1: document.body.style.cursor = 'pointer'; break; case 2: document.body.style.cursor = 'wait'; break; default: document.body.style.cursor = 'default'; } }
+  89420: () => { const rect = document.getElementById('canvas').getBoundingClientRect(); const xVal = event.clientX - rect.left; const yVal = event.clientY - rect.top; Module['cursorX'] = xVal; Module['cursorY'] = yVal; },  
+ 89627: () => { return Module['cursorX']; },  
+ 89657: () => { return Module['cursorY']; },  
+ 89687: ($0, $1) => { const rect = document.getElementById('canvas').getBoundingClientRect(); const xVal = event.clientX - rect.left; const yVal = event.clientY - rect.top; Module.getCursorPositionFromCpp($0, $1); },  
+ 89883: ($0) => { switch ($0) { case 0: document.body.style.cursor = 'default'; break; case 1: document.body.style.cursor = 'pointer'; break; case 2: document.body.style.cursor = 'wait'; break; case 3: document.body.style.cursor = 'none'; break; default: document.body.style.cursor = 'default'; } }
 };
 
 
@@ -4967,18 +4971,6 @@ var ASM_CONSTS = {
       return _emscripten_get_window_title.buffer;
     }
 
-  function _emscripten_hide_mouse() {
-      var styleSheet = document.styleSheets[0];
-      var rules = styleSheet.cssRules;
-      for (var i = 0; i < rules.length; i++) {
-        if (rules[i].cssText.substr(0, 6) == 'canvas') {
-          styleSheet.deleteRule(i);
-          i--;
-        }
-      }
-      styleSheet.insertRule('canvas.emscripten { border: 1px solid black; cursor: none; }', 0);
-    }
-
   function _emscripten_lock_orientation(allowedOrientations) {
       var orientations = [];
       if (allowedOrientations & 1) orientations.push("portrait-primary");
@@ -7473,7 +7465,6 @@ var wasmImports = {
   "emscripten_get_screen_size": _emscripten_get_screen_size,
   "emscripten_get_visibility_status": _emscripten_get_visibility_status,
   "emscripten_get_window_title": _emscripten_get_window_title,
-  "emscripten_hide_mouse": _emscripten_hide_mouse,
   "emscripten_lock_orientation": _emscripten_lock_orientation,
   "emscripten_memcpy_big": _emscripten_memcpy_big,
   "emscripten_request_fullscreen": _emscripten_request_fullscreen,
@@ -7557,6 +7548,8 @@ var wasmImports = {
 var asm = createWasm();
 /** @type {function(...*):?} */
 var ___wasm_call_ctors = createExportWrapper("__wasm_call_ctors");
+/** @type {function(...*):?} */
+var _getCursorPosition = Module["_getCursorPosition"] = createExportWrapper("getCursorPosition");
 /** @type {function(...*):?} */
 var _main = Module["_main"] = createExportWrapper("main");
 /** @type {function(...*):?} */

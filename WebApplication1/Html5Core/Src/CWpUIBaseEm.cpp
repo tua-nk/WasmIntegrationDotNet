@@ -687,11 +687,9 @@ void CWpUIBaseEm::Mouse_CurserSet(eWpCurserType eWpNewCurser) {
 }
 void CWpUIBaseEm::Mouse_CurserShow() {
     // platform specific code to hide the curser
-    emscripten_hide_mouse();
 }
 void CWpUIBaseEm::Mouse_CurserHide() {
     // platform specific code to show the curser
-    emscripten_hide_mouse();
 }
 
 //______________
