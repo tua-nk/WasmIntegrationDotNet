@@ -137,6 +137,24 @@ void CWpUIAppRotTri::OnRenderAnimate()
 //========================================================================================================
 // WARP APPLICATION UI EVENTS CALLBACK API
 
+extern "C" {
+    EMSCRIPTEN_KEEPALIVE void replace_1st_scene(char* fname) {
+        ToConsole(fname);
+    }
+}
+
+EM_JS (void, js_opendialog, (), {
+    var file_selector = document.createElement('input');
+    file_selector.setAttribute('type', 'file');
+    file_selector.addEventListener('change', function(e) {
+        if (e.target.files[0]) {
+            Module.ccall('replace_1st_scene', null, ['string'], [e.target.files[0].name]);
+        }
+    });
+    //file_selector.setAttribute('accept','.png,.jpg,.jpeg'); // optional - limit accepted file types 
+    file_selector.click();
+});
+
 //_________________________
 // KEYBOARD EVENT CALLBACKS
 void CWpUIAppRotTri::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, bool bCtrl, bool bFn)
@@ -202,6 +220,23 @@ void CWpUIAppRotTri::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, b
             Mouse_CurserSet(eWpCurserType::eWpCurser_Default);
             break;
         }
+
+        case 'a':
+        {
+            std::string strClipboard = ClipboardGet();
+            ToConsole("----------------------------------------" + strClipboard);
+            break;
+        }
+        case 's':
+        {
+            ClipboardSet("Hello WASM!");
+            break;
+        }
+        case 'd':
+        {
+            js_opendialog();
+        }
+
         //...ETC.
 
         default:
@@ -367,10 +402,74 @@ void CWpUIAppRotTri::Mouse_CurserHide() {
 
 //______________
 // CLIPBOARD API
+void SetClipboardText(const char* text) {
+    EM_ASM_({
+        const str = UTF8ToString($0); // Convert C string to JavaScript string
+        if (!navigator.clipboard) {
+            throw new Error('Clipboard API not supported');
+        }
+        navigator.clipboard.writeText(str)
+            .then(() => console.log('Text set to clipboard'))
+            .catch((error) => console.error('Error setting text to clipboard:', error));
+    }, text);
+}
+
 void CWpUIAppRotTri::ClipboardSet(std::string strClipText) {
     // platform specific code to save strClipText to the clip board.
+    SetClipboardText(strClipText.c_str());
 }
+
+// Declare a global variable to store the clipboard data
+char* clipboardData = nullptr;
+
+extern "C" {
+    // Declare the function to be called from JavaScript
+    EMSCRIPTEN_KEEPALIVE
+    void readClipboard() {
+        EM_ASM({
+            // Access the clipboard data using JavaScript
+            var textarea = document.createElement('textarea');
+            document.body.appendChild(textarea);
+            textarea.focus();
+            document.execCommand('paste');
+            var clipboardData = textarea.value;
+            document.body.removeChild(textarea);
+            
+            // Allocate memory in the Emscripten heap for the clipboard data
+            var lengthBytes = lengthBytesUTF8(clipboardData) + 1;
+            var stringOnHeap = _malloc(lengthBytes);
+            
+            // Copy the clipboard data to the Emscripten heap
+            stringToUTF8(clipboardData, stringOnHeap, lengthBytes);
+            
+            // Store the pointer to the clipboard data in the global variable
+            Module._clipboardData = stringOnHeap;
+        });
+    }
+    
+    // Declare a function to retrieve the clipboard data from C++
+    EMSCRIPTEN_KEEPALIVE
+    const char* getClipboardData() {
+        return clipboardData;
+    }
+    
+    // Declare a function to free the allocated memory
+    EMSCRIPTEN_KEEPALIVE
+    void freeClipboardData() {
+        if (clipboardData != nullptr) {
+            free(clipboardData);
+            clipboardData = nullptr;
+        }
+    }
+}
+
 std::string CWpUIAppRotTri::ClipboardGet() {
     // platform specific code to return clipboard's text in strClipText.
-    return "";
+    // Call the readClipboard() function in JavaScript
+    emscripten_run_script("readClipboard()");
+
+    // Retrieve the clipboard data from JavaScript
+    const char* clipboardData = getClipboardData();
+
+    return std::string(clipboardData);
 }
