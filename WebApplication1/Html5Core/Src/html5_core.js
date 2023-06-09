@@ -46,6 +46,42 @@ if (Module['ENVIRONMENT']) {
   throw new Error('Module.ENVIRONMENT has been deprecated. To force the environment, use the ENVIRONMENT compile-time option (for example, -sENVIRONMENT=web or -sENVIRONMENT=node)');
 }
 
+function launchFileDialog(maxFileSize) {
+    var fileInput = document.createElement('input');
+    fileInput.setAttribute('type', 'file');
+    fileInput.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) {
+            // File not selected, directly call WASM function with read error.
+            Module._fileDataHandler(0, 0, 0, 1);
+        } else if (file.size > maxFileSize) {
+            // File size is larger than max, directly call WASM function with size error.
+            Module._fileDataHandler(0, 0, 1, 0);
+        } else {
+            // Read the file and directly call WASM function with the data.
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var data = new Uint8Array(e.target.result);
+                //var ptr = Module._malloc(data.length * data.BYTES_PER_ELEMENT); // Allocate memory
+                var typedArray = new Int32Array(data.length); // Allocate memory
+                typedArray.set(data); // Copy data to the allocated memory
+                var ptr = typedArray.byteOffset; // Get the byte offset of the allocated memory
+                Module.HEAPU8.set(data, ptr); // Copy data to memory
+                Module._fileDataHandler(ptr, data.length, 0, 0); // Call function
+                Module._free(ptr); // Free memory
+            };
+            reader.onerror = function(e) {
+                // File read error, directly call WASM function with read error.
+                Module._fileDataHandler(0, 0, 0, 1);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+    });
+    fileInput.click();
+}
+
+Module['launchFileDialog'] = launchFileDialog;
+
 // `/` should be present at the end if `scriptDirectory` is not empty
 var scriptDirectory = '';
 function locateFile(path) {
@@ -1002,12 +1038,13 @@ function dbg(text) {
 // === Body ===
 
 var ASM_CONSTS = {
-  89420: () => { const rect = document.getElementById('canvas').getBoundingClientRect(); const xVal = event.clientX - rect.left; const yVal = event.clientY - rect.top; Module['cursorX'] = xVal; Module['cursorY'] = yVal; },  
- 89627: () => { return Module['cursorX']; },  
- 89657: () => { return Module['cursorY']; },  
- 89687: ($0, $1) => { const rect = document.getElementById('canvas').getBoundingClientRect(); const xVal = event.clientX - rect.left; const yVal = event.clientY - rect.top; Module.getCursorPositionFromCpp($0, $1); },  
- 89883: ($0) => { switch ($0) { case 0: document.body.style.cursor = 'default'; break; case 1: document.body.style.cursor = 'pointer'; break; case 2: document.body.style.cursor = 'wait'; break; case 3: document.body.style.cursor = 'none'; break; default: document.body.style.cursor = 'default'; } }
+  89825: ($0) => { Module.launchFileDialog($0); },  
+ 89858: ($0) => { console.log(Pointer_stringify($0)); },  
+ 89898: ($0) => { switch ($0) { case 0: document.body.style.cursor = 'default'; break; case 1: document.body.style.cursor = 'pointer'; break; case 2: document.body.style.cursor = 'wait'; break; case 3: document.body.style.cursor = 'none'; break; default: document.body.style.cursor = 'default'; } },  
+ 90181: ($0) => { const str = UTF8ToString($0); if (!navigator.clipboard) { throw new Error('Clipboard API not supported'); } navigator.clipboard.writeText(str) .then(() => console.log('Text set to clipboard')) .catch((error) => console.error('Error setting text to clipboard:', error)); },  
+ 90455: () => { var textarea = document.createElement('textarea'); document.body.appendChild(textarea); textarea.focus(); document.execCommand('paste'); var clipboardData = textarea.value; document.body.removeChild(textarea); var lengthBytes = lengthBytesUTF8(clipboardData) + 1; var stringOnHeap = _malloc(lengthBytes); stringToUTF8(clipboardData, stringOnHeap, lengthBytes); Module._clipboardData = stringOnHeap; }
 };
+function js_opendialog() { var file_selector = document.createElement('input'); file_selector.setAttribute('type', 'file'); file_selector.addEventListener('change', function(e) { if (e.target.files[0]) { var path = (window.URL || window.webkitURL).createObjectURL(e.target.files[0]); Module.ccall('replace_1st_scene', null, ['string'], [path]); } }); file_selector.click(); }
 
 
 
@@ -5141,6 +5178,10 @@ var ASM_CONSTS = {
       return false;
     }
 
+  function _emscripten_run_script(ptr) {
+      eval(UTF8ToString(ptr));
+    }
+
   
   
   
@@ -6843,6 +6884,7 @@ var ASM_CONSTS = {
       GLctx.vertexAttribPointer(index, size, type, !!normalized, stride, ptr);
     }
 
+
   function isLeapYear(year) {
         return year%4 === 0 && (year%100 !== 0 || year%400 === 0);
     }
@@ -7186,6 +7228,86 @@ var ASM_CONSTS = {
 
 
 
+  function getCFunc(ident) {
+      var func = Module['_' + ident]; // closure exported function
+      assert(func, 'Cannot call unknown function ' + ident + ', make sure it is exported');
+      return func;
+    }
+  
+  
+  
+  
+    /**
+     * @param {string|null=} returnType
+     * @param {Array=} argTypes
+     * @param {Arguments|Array=} args
+     * @param {Object=} opts
+     */
+  function ccall(ident, returnType, argTypes, args, opts) {
+      // For fast lookup of conversion functions
+      var toC = {
+        'string': (str) => {
+          var ret = 0;
+          if (str !== null && str !== undefined && str !== 0) { // null string
+            // at most 4 bytes per UTF-8 code point, +1 for the trailing '\0'
+            ret = stringToUTF8OnStack(str);
+          }
+          return ret;
+        },
+        'array': (arr) => {
+          var ret = stackAlloc(arr.length);
+          writeArrayToMemory(arr, ret);
+          return ret;
+        }
+      };
+  
+      function convertReturnValue(ret) {
+        if (returnType === 'string') {
+          
+          return UTF8ToString(ret);
+        }
+        if (returnType === 'boolean') return Boolean(ret);
+        return ret;
+      }
+  
+      var func = getCFunc(ident);
+      var cArgs = [];
+      var stack = 0;
+      assert(returnType !== 'array', 'Return type should not be "array".');
+      if (args) {
+        for (var i = 0; i < args.length; i++) {
+          var converter = toC[argTypes[i]];
+          if (converter) {
+            if (stack === 0) stack = stackSave();
+            cArgs[i] = converter(args[i]);
+          } else {
+            cArgs[i] = args[i];
+          }
+        }
+      }
+      var ret = func.apply(null, cArgs);
+      function onDone(ret) {
+        if (stack !== 0) stackRestore(stack);
+        return convertReturnValue(ret);
+      }
+  
+      ret = onDone(ret);
+      return ret;
+    }
+
+  
+  
+    /**
+     * @param {string=} returnType
+     * @param {Array=} argTypes
+     * @param {Object=} opts
+     */
+  function cwrap(ident, returnType, argTypes, opts) {
+      return function() {
+        return ccall(ident, returnType, argTypes, arguments, opts);
+      }
+    }
+
       // exports
       Module["requestFullscreen"] = function Module_requestFullscreen(lockPointer, resizeCanvas) { Browser.requestFullscreen(lockPointer, resizeCanvas) };
       Module["requestFullScreen"] = function Module_requestFullScreen() { Browser.requestFullScreen() };
@@ -7470,6 +7592,7 @@ var wasmImports = {
   "emscripten_request_fullscreen": _emscripten_request_fullscreen,
   "emscripten_request_pointerlock": _emscripten_request_pointerlock,
   "emscripten_resize_heap": _emscripten_resize_heap,
+  "emscripten_run_script": _emscripten_run_script,
   "emscripten_set_batterychargingchange_callback_on_thread": _emscripten_set_batterychargingchange_callback_on_thread,
   "emscripten_set_batterylevelchange_callback_on_thread": _emscripten_set_batterylevelchange_callback_on_thread,
   "emscripten_set_beforeunload_callback_on_thread": _emscripten_set_beforeunload_callback_on_thread,
@@ -7543,13 +7666,26 @@ var wasmImports = {
   "glUniformMatrix4fv": _glUniformMatrix4fv,
   "glUseProgram": _glUseProgram,
   "glVertexAttribPointer": _glVertexAttribPointer,
+  "js_opendialog": js_opendialog,
   "strftime_l": _strftime_l
 };
 var asm = createWasm();
 /** @type {function(...*):?} */
 var ___wasm_call_ctors = createExportWrapper("__wasm_call_ctors");
 /** @type {function(...*):?} */
-var _getCursorPosition = Module["_getCursorPosition"] = createExportWrapper("getCursorPosition");
+var _replace_1st_scene = Module["_replace_1st_scene"] = createExportWrapper("replace_1st_scene");
+/** @type {function(...*):?} */
+var _myJavaScriptFunction = Module["_myJavaScriptFunction"] = createExportWrapper("myJavaScriptFunction");
+/** @type {function(...*):?} */
+var _fileDataHandler = Module["_fileDataHandler"] = createExportWrapper("fileDataHandler");
+/** @type {function(...*):?} */
+var _free = createExportWrapper("free");
+/** @type {function(...*):?} */
+var _readClipboard = Module["_readClipboard"] = createExportWrapper("readClipboard");
+/** @type {function(...*):?} */
+var _getClipboardData = Module["_getClipboardData"] = createExportWrapper("getClipboardData");
+/** @type {function(...*):?} */
+var _freeClipboardData = Module["_freeClipboardData"] = createExportWrapper("freeClipboardData");
 /** @type {function(...*):?} */
 var _main = Module["_main"] = createExportWrapper("main");
 /** @type {function(...*):?} */
@@ -7558,8 +7694,6 @@ var ___errno_location = createExportWrapper("__errno_location");
 var _fflush = Module["_fflush"] = createExportWrapper("fflush");
 /** @type {function(...*):?} */
 var _malloc = createExportWrapper("malloc");
-/** @type {function(...*):?} */
-var _free = createExportWrapper("free");
 /** @type {function(...*):?} */
 var _emscripten_stack_init = function() {
   return (_emscripten_stack_init = Module["asm"]["emscripten_stack_init"]).apply(null, arguments);
@@ -7603,7 +7737,8 @@ var dynCall_iiiiij = Module["dynCall_iiiiij"] = createExportWrapper("dynCall_iii
 var dynCall_iiiiijj = Module["dynCall_iiiiijj"] = createExportWrapper("dynCall_iiiiijj");
 /** @type {function(...*):?} */
 var dynCall_iiiiiijj = Module["dynCall_iiiiiijj"] = createExportWrapper("dynCall_iiiiiijj");
-
+var ___start_em_js = Module['___start_em_js'] = 89468;
+var ___stop_em_js = Module['___stop_em_js'] = 89825;
 
 // include: postamble.js
 // === Auto-generated postamble setup entry stuff ===
@@ -7616,6 +7751,8 @@ Module["FS_createPreloadedFile"] = FS.createPreloadedFile;
 Module["FS_createLazyFile"] = FS.createLazyFile;
 Module["FS_createDevice"] = FS.createDevice;
 Module["FS_unlink"] = FS.unlink;
+Module["ccall"] = ccall;
+Module["cwrap"] = cwrap;
 var missingLibrarySymbols = [
   'ydayFromDate',
   'setErrNo',
@@ -7655,9 +7792,6 @@ var missingLibrarySymbols = [
   'readI53FromU64',
   'convertI32PairToI53',
   'convertU32PairToI53',
-  'getCFunc',
-  'ccall',
-  'cwrap',
   'uleb128Encode',
   'sigToWasmTypes',
   'generateFuncType',
@@ -7788,6 +7922,7 @@ var unexportedSymbols = [
   'alignMemory',
   'mmapAlloc',
   'convertI32PairToI53Checked',
+  'getCFunc',
   'freeTableIndexes',
   'functionsInTableMap',
   'setValue',

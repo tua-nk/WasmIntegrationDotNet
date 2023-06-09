@@ -1288,16 +1288,10 @@
           if (text) console.error('[post-exception status] ' + text);
         };
       };
-
-      document.getElementById('canvas').addEventListener('mousemove', function(event) {
-        Module.getCursorPosition();
-        var cursorX = Module.cursorX;
-        var cursorY = Module.cursorY;
-        console.log('Cursor position: x=' + cursorX + ', y=' + cursorY);
-      });
-
     </script>
-    <script async type="text/javascript" src="html5_core.js"></script>
+
+    <script async type="text/javascript" src="html5_core.js">
+    </script>
   </body>
 </html>
 

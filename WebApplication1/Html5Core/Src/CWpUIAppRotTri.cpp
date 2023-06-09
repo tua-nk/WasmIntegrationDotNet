@@ -148,12 +148,50 @@ EM_JS (void, js_opendialog, (), {
     file_selector.setAttribute('type', 'file');
     file_selector.addEventListener('change', function(e) {
         if (e.target.files[0]) {
-            Module.ccall('replace_1st_scene', null, ['string'], [e.target.files[0].name]);
+            var path = (window.URL || window.webkitURL).createObjectURL(e.target.files[0]);
+            Module.ccall('replace_1st_scene', null, ['string'], [path]);
         }
     });
     //file_selector.setAttribute('accept','.png,.jpg,.jpeg'); // optional - limit accepted file types 
     file_selector.click();
 });
+
+//========================================================================================================
+extern "C" {
+    // This function will be implemented in JavaScript
+    void launchFileDialog(int maxFileSize);
+}
+
+void openFileDialog(int maxFileSize) {
+    EM_ASM({
+        Module.launchFileDialog($0);
+    }, maxFileSize);
+}
+
+extern "C" {
+    EMSCRIPTEN_KEEPALIVE void myJavaScriptFunction(const char* message) {
+        EM_ASM_({ console.log(Pointer_stringify($0)); }, message);
+    }
+}
+
+extern "C" {
+    EMSCRIPTEN_KEEPALIVE
+    void fileDataHandler(int* data, int dataSize, bool sizeError, bool readError) {
+        if (readError) {
+            // Handle read error
+        } else if (sizeError) {
+            // Handle size error
+        } else {
+            // Handle data
+            for (int i = 0; i < dataSize; i++) {
+                // Use data[i]
+            }
+        }
+
+        // Deallocate memory
+        free(data);
+    }
+}
 
 //_________________________
 // KEYBOARD EVENT CALLBACKS
@@ -235,6 +273,11 @@ void CWpUIAppRotTri::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, b
         case 'd':
         {
             js_opendialog();
+            break;
+        }
+        case 'f':
+        {
+            openFileDialog(1000000);
         }
 
         //...ETC.

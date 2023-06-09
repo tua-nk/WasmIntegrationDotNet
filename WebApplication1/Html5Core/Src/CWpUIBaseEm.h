@@ -1,6 +1,7 @@
 #pragma once
 #include "CWpUIBase.h"
 #include <emscripten.h>
+#include <emscripten/bind.h>
 #include <emscripten/html5.h>
 
 #include <GLES3/gl3.h>
