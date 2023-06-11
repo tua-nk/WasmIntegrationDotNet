@@ -62,13 +62,11 @@ function launchFileDialog(maxFileSize) {
             var reader = new FileReader();
             reader.onload = function(e) {
                 var data = new Uint8Array(e.target.result);
-                //var ptr = Module._malloc(data.length * data.BYTES_PER_ELEMENT); // Allocate memory
-                var typedArray = new Int32Array(data.length); // Allocate memory
-                typedArray.set(data); // Copy data to the allocated memory
-                var ptr = typedArray.byteOffset; // Get the byte offset of the allocated memory
-                Module.HEAPU8.set(data, ptr); // Copy data to memory
-                Module._fileDataHandler(ptr, data.length, 0, 0); // Call function
-                //Module._free(ptr); // Free memory
+                var dataSize = data.length * data.BYTES_PER_ELEMENT;
+                var dataPtr = stackAlloc(dataSize); // Allocate memory on the stack
+                Module.HEAPU8.set(data, dataPtr); // Copy data to memory
+                Module._fileDataHandler(dataPtr, dataSize, 0, 0); // Call function
+                stackRestore(dataPtr); // Deallocate memory
             };
             reader.onerror = function(e) {
                 // File read error, directly call WASM function with read error.

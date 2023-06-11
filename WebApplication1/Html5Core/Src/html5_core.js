@@ -62,13 +62,11 @@ function launchFileDialog(maxFileSize) {
             var reader = new FileReader();
             reader.onload = function(e) {
                 var data = new Uint8Array(e.target.result);
-                //var ptr = Module._malloc(data.length * data.BYTES_PER_ELEMENT); // Allocate memory
-                var typedArray = new Int32Array(data.length); // Allocate memory
-                typedArray.set(data); // Copy data to the allocated memory
-                var ptr = typedArray.byteOffset; // Get the byte offset of the allocated memory
-                Module.HEAPU8.set(data, ptr); // Copy data to memory
-                Module._fileDataHandler(ptr, data.length, 0, 0); // Call function
-                Module._free(ptr); // Free memory
+                var dataSize = data.length * data.BYTES_PER_ELEMENT;
+                var dataPtr = stackAlloc(dataSize); // Allocate memory on the stack
+                Module.HEAPU8.set(data, dataPtr); // Copy data to memory
+                Module._fileDataHandler(dataPtr, dataSize, 0, 0); // Call function
+                stackRestore(dataPtr); // Deallocate memory
             };
             reader.onerror = function(e) {
                 // File read error, directly call WASM function with read error.
@@ -1181,7 +1179,7 @@ function js_opendialog() { var file_selector = document.createElement('input'); 
      * @param {number} ptr
      * @param {number=} maxBytesToRead - An optional length that specifies the
      *   maximum number of bytes to read. You can omit this parameter to scan the
-     *   string until the first   byte. If maxBytesToRead is passed, and the string
+     *   string until the first   byte. If maxBytesToRead is passed, and the string
      *   at [ptr, ptr+maxBytesToReadr[ contains a null byte in the middle, then the
      *   string will cut short at that byte index (i.e. maxBytesToRead will not
      *   produce a string of exact length [ptr, ptr+maxBytesToRead[) N.B. mixing
