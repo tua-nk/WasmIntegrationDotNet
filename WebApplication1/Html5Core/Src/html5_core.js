@@ -1036,11 +1036,11 @@ function dbg(text) {
 // === Body ===
 
 var ASM_CONSTS = {
-  89825: ($0) => { Module.launchFileDialog($0); },  
- 89858: ($0) => { console.log(Pointer_stringify($0)); },  
- 89898: ($0) => { switch ($0) { case 0: document.body.style.cursor = 'default'; break; case 1: document.body.style.cursor = 'pointer'; break; case 2: document.body.style.cursor = 'wait'; break; case 3: document.body.style.cursor = 'none'; break; default: document.body.style.cursor = 'default'; } },  
- 90181: ($0) => { const str = UTF8ToString($0); if (!navigator.clipboard) { throw new Error('Clipboard API not supported'); } navigator.clipboard.writeText(str) .then(() => console.log('Text set to clipboard')) .catch((error) => console.error('Error setting text to clipboard:', error)); },  
- 90455: () => { var textarea = document.createElement('textarea'); document.body.appendChild(textarea); textarea.focus(); document.execCommand('paste'); var clipboardData = textarea.value; document.body.removeChild(textarea); var lengthBytes = lengthBytesUTF8(clipboardData) + 1; var stringOnHeap = _malloc(lengthBytes); stringToUTF8(clipboardData, stringOnHeap, lengthBytes); Module._clipboardData = stringOnHeap; }
+  89841: ($0) => { Module.launchFileDialog($0); },  
+ 89874: ($0) => { console.log(Pointer_stringify($0)); },  
+ 89914: ($0) => { switch ($0) { case 0: document.body.style.cursor = 'default'; break; case 1: document.body.style.cursor = 'pointer'; break; case 2: document.body.style.cursor = 'wait'; break; case 3: document.body.style.cursor = 'none'; break; default: document.body.style.cursor = 'default'; } },  
+ 90197: ($0) => { const str = UTF8ToString($0); if (!navigator.clipboard) { throw new Error('Clipboard API not supported'); } navigator.clipboard.writeText(str) .then(() => console.log('Text set to clipboard')) .catch((error) => console.error('Error setting text to clipboard:', error)); },  
+ 90471: () => { var textarea = document.createElement('textarea'); document.body.appendChild(textarea); textarea.focus(); document.execCommand('paste'); var clipboardData = textarea.value; document.body.removeChild(textarea); var lengthBytes = lengthBytesUTF8(clipboardData) + 1; var stringOnHeap = _malloc(lengthBytes); stringToUTF8(clipboardData, stringOnHeap, lengthBytes); Module._clipboardData = stringOnHeap; }
 };
 function js_opendialog() { var file_selector = document.createElement('input'); file_selector.setAttribute('type', 'file'); file_selector.addEventListener('change', function(e) { if (e.target.files[0]) { var path = (window.URL || window.webkitURL).createObjectURL(e.target.files[0]); Module.ccall('replace_1st_scene', null, ['string'], [path]); } }); file_selector.click(); }
 
@@ -1179,7 +1179,7 @@ function js_opendialog() { var file_selector = document.createElement('input'); 
      * @param {number} ptr
      * @param {number=} maxBytesToRead - An optional length that specifies the
      *   maximum number of bytes to read. You can omit this parameter to scan the
-     *   string until the first   byte. If maxBytesToRead is passed, and the string
+     *   string until the first   byte. If maxBytesToRead is passed, and the string
      *   at [ptr, ptr+maxBytesToReadr[ contains a null byte in the middle, then the
      *   string will cut short at that byte index (i.e. maxBytesToRead will not
      *   produce a string of exact length [ptr, ptr+maxBytesToRead[) N.B. mixing
@@ -7293,19 +7293,6 @@ function js_opendialog() { var file_selector = document.createElement('input'); 
       return ret;
     }
 
-  
-  
-    /**
-     * @param {string=} returnType
-     * @param {Array=} argTypes
-     * @param {Object=} opts
-     */
-  function cwrap(ident, returnType, argTypes, opts) {
-      return function() {
-        return ccall(ident, returnType, argTypes, arguments, opts);
-      }
-    }
-
       // exports
       Module["requestFullscreen"] = function Module_requestFullscreen(lockPointer, resizeCanvas) { Browser.requestFullscreen(lockPointer, resizeCanvas) };
       Module["requestFullScreen"] = function Module_requestFullScreen() { Browser.requestFullScreen() };
@@ -7735,8 +7722,8 @@ var dynCall_iiiiij = Module["dynCall_iiiiij"] = createExportWrapper("dynCall_iii
 var dynCall_iiiiijj = Module["dynCall_iiiiijj"] = createExportWrapper("dynCall_iiiiijj");
 /** @type {function(...*):?} */
 var dynCall_iiiiiijj = Module["dynCall_iiiiiijj"] = createExportWrapper("dynCall_iiiiiijj");
-var ___start_em_js = Module['___start_em_js'] = 89468;
-var ___stop_em_js = Module['___stop_em_js'] = 89825;
+var ___start_em_js = Module['___start_em_js'] = 89484;
+var ___stop_em_js = Module['___stop_em_js'] = 89841;
 
 // include: postamble.js
 // === Auto-generated postamble setup entry stuff ===
@@ -7749,8 +7736,9 @@ Module["FS_createPreloadedFile"] = FS.createPreloadedFile;
 Module["FS_createLazyFile"] = FS.createLazyFile;
 Module["FS_createDevice"] = FS.createDevice;
 Module["FS_unlink"] = FS.unlink;
+Module["stackAlloc"] = stackAlloc;
+Module["stackRestore"] = stackRestore;
 Module["ccall"] = ccall;
-Module["cwrap"] = cwrap;
 var missingLibrarySymbols = [
   'ydayFromDate',
   'setErrNo',
@@ -7790,6 +7778,7 @@ var missingLibrarySymbols = [
   'readI53FromU64',
   'convertI32PairToI53',
   'convertU32PairToI53',
+  'cwrap',
   'uleb128Encode',
   'sigToWasmTypes',
   'generateFuncType',
@@ -7877,9 +7866,7 @@ var unexportedSymbols = [
   'abort',
   'keepRuntimeAlive',
   'wasmMemory',
-  'stackAlloc',
   'stackSave',
-  'stackRestore',
   'getTempRet0',
   'setTempRet0',
   'writeStackCookie',

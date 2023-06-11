@@ -186,6 +186,8 @@ extern "C" {
             for (int i = 0; i < dataSize; i++) {
                 // Use data[i]
             }
+
+            std::cout << "dataSize: " << dataSize << std::endl;
         }
 
         // Deallocate memory
