@@ -136,27 +136,6 @@ void CWpUIAppRotTri::OnRenderAnimate()
 
 //========================================================================================================
 // WARP APPLICATION UI EVENTS CALLBACK API
-
-extern "C" {
-    EMSCRIPTEN_KEEPALIVE void replace_1st_scene(char* fname) {
-        ToConsole(fname);
-    }
-}
-
-EM_JS (void, js_opendialog, (), {
-    var file_selector = document.createElement('input');
-    file_selector.setAttribute('type', 'file');
-    file_selector.addEventListener('change', function(e) {
-        if (e.target.files[0]) {
-            var path = (window.URL || window.webkitURL).createObjectURL(e.target.files[0]);
-            Module.ccall('replace_1st_scene', null, ['string'], [path]);
-        }
-    });
-    //file_selector.setAttribute('accept','.png,.jpg,.jpeg'); // optional - limit accepted file types 
-    file_selector.click();
-});
-
-//========================================================================================================
 extern "C" {
     // This function will be implemented in JavaScript
     void launchFileDialog(int maxFileSize);
@@ -274,7 +253,6 @@ void CWpUIAppRotTri::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, b
         }
         case 'd':
         {
-            js_opendialog();
             break;
         }
         case 'f':
