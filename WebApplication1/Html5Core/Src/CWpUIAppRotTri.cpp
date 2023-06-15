@@ -1,5 +1,7 @@
 #include "CWpUIAppRotTri.h"
 
+extern CWpUIAppRotTri* gRotTriApp;
+
 const char* vertexShaderSource = "#version 300 es\n"
 "layout (location = 0) in vec3 aPos;\n"
 "uniform mat4 uViewMatrix;\n"
@@ -89,8 +91,9 @@ void timer_callback(void* userData) {
     render();
 }
 
+//========================================================================================================
+// DRAG AND DROP
 extern "C" {
-
     EMSCRIPTEN_KEEPALIVE
     void FilesBeingDragged(int x, int y, const char* files) {
         // Implement your functionality here
@@ -107,9 +110,8 @@ extern "C" {
     int GetMaxFileSize() {
         // Implement your functionality here
         ToConsole("GetMaxFileSize");
-        return 1000000; // For example
+        return 1048576; // For example
     }
-
 }
 
 EM_JS(void, js_init_drag_and_drop, (), {
@@ -325,11 +327,7 @@ void CWpUIAppRotTri::OnKeyboard(char cKey, bool bDown, bool bAlt, bool bShift, b
         }
         case 'd':
         {
-            break;
-        }
-        case 'f':
-        {
-            openFileDialog(1000000);
+            openFileDialog(1048576);
         }
 
         //...ETC.

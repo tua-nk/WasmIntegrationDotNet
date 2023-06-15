@@ -1036,13 +1036,13 @@ function dbg(text) {
 // === Body ===
 
 var ASM_CONSTS = {
-  89841: ($0) => { Module.launchFileDialog($0); },  
- 89874: ($0) => { console.log(Pointer_stringify($0)); },  
- 89914: ($0) => { switch ($0) { case 0: document.body.style.cursor = 'default'; break; case 1: document.body.style.cursor = 'pointer'; break; case 2: document.body.style.cursor = 'wait'; break; case 3: document.body.style.cursor = 'none'; break; default: document.body.style.cursor = 'default'; } },  
- 90197: ($0) => { const str = UTF8ToString($0); if (!navigator.clipboard) { throw new Error('Clipboard API not supported'); } navigator.clipboard.writeText(str) .then(() => console.log('Text set to clipboard')) .catch((error) => console.error('Error setting text to clipboard:', error)); },  
- 90471: () => { var textarea = document.createElement('textarea'); document.body.appendChild(textarea); textarea.focus(); document.execCommand('paste'); var clipboardData = textarea.value; document.body.removeChild(textarea); var lengthBytes = lengthBytesUTF8(clipboardData) + 1; var stringOnHeap = _malloc(lengthBytes); stringToUTF8(clipboardData, stringOnHeap, lengthBytes); Module._clipboardData = stringOnHeap; }
+  90641: ($0) => { Module.launchFileDialog($0); },  
+ 90674: ($0) => { console.log(Pointer_stringify($0)); },  
+ 90714: ($0) => { switch ($0) { case 0: document.body.style.cursor = 'default'; break; case 1: document.body.style.cursor = 'pointer'; break; case 2: document.body.style.cursor = 'wait'; break; case 3: document.body.style.cursor = 'none'; break; default: document.body.style.cursor = 'default'; } },  
+ 90997: ($0) => { const str = UTF8ToString($0); if (!navigator.clipboard) { throw new Error('Clipboard API not supported'); } navigator.clipboard.writeText(str) .then(() => console.log('Text set to clipboard')) .catch((error) => console.error('Error setting text to clipboard:', error)); },  
+ 91271: () => { var textarea = document.createElement('textarea'); document.body.appendChild(textarea); textarea.focus(); document.execCommand('paste'); var clipboardData = textarea.value; document.body.removeChild(textarea); var lengthBytes = lengthBytesUTF8(clipboardData) + 1; var stringOnHeap = _malloc(lengthBytes); stringToUTF8(clipboardData, stringOnHeap, lengthBytes); Module._clipboardData = stringOnHeap; }
 };
-function js_opendialog() { var file_selector = document.createElement('input'); file_selector.setAttribute('type', 'file'); file_selector.addEventListener('change', function(e) { if (e.target.files[0]) { var path = (window.URL || window.webkitURL).createObjectURL(e.target.files[0]); Module.ccall('replace_1st_scene', null, ['string'], [path]); } }); file_selector.click(); }
+function js_init_drag_and_drop() { function allocateUTF8(str) { var len = lengthBytesUTF8(str) + 1; var ptr = _malloc(len); stringToUTF8(str, ptr, len); return ptr; } document.addEventListener('dragover', function(event) { event.preventDefault(); var x = event.clientX; var y = event.clientY; var files = Array.from(event.dataTransfer.items).map(item => item.name).join(","); _FilesBeingDragged(x, y, allocateUTF8(files)); }); document.addEventListener('drop', function(event) { event.preventDefault(); var x = event.clientX; var y = event.clientY; var maxFileSize = _GetMaxFileSize(); Array.from(event.dataTransfer.items).forEach(item => { if (item.kind === 'file') { var file = item.getAsFile(); if (file.size > maxFileSize) { _FileDropped(x, y, 0, allocateUTF8(file.name), 1); } else { var reader = new FileReader(); reader.onload = function(event) { var fileData = new Uint8Array(event.target.result); var buffer = _malloc(fileData.length); HEAPU8.set(fileData, buffer); _FileDropped(x, y, buffer, allocateUTF8(file.name), 0); _free(buffer); }; reader.onerror = function(event) { _FileDropped(x, y, 0, allocateUTF8(file.name), 1); }; reader.readAsArrayBuffer(file); } } }); }); }
 
 
 
@@ -7651,14 +7651,18 @@ var wasmImports = {
   "glUniformMatrix4fv": _glUniformMatrix4fv,
   "glUseProgram": _glUseProgram,
   "glVertexAttribPointer": _glVertexAttribPointer,
-  "js_opendialog": js_opendialog,
+  "js_init_drag_and_drop": js_init_drag_and_drop,
   "strftime_l": _strftime_l
 };
 var asm = createWasm();
 /** @type {function(...*):?} */
 var ___wasm_call_ctors = createExportWrapper("__wasm_call_ctors");
 /** @type {function(...*):?} */
-var _replace_1st_scene = Module["_replace_1st_scene"] = createExportWrapper("replace_1st_scene");
+var _FilesBeingDragged = Module["_FilesBeingDragged"] = createExportWrapper("FilesBeingDragged");
+/** @type {function(...*):?} */
+var _FileDropped = Module["_FileDropped"] = createExportWrapper("FileDropped");
+/** @type {function(...*):?} */
+var _GetMaxFileSize = Module["_GetMaxFileSize"] = createExportWrapper("GetMaxFileSize");
 /** @type {function(...*):?} */
 var _myJavaScriptFunction = Module["_myJavaScriptFunction"] = createExportWrapper("myJavaScriptFunction");
 /** @type {function(...*):?} */
@@ -7723,7 +7727,7 @@ var dynCall_iiiiijj = Module["dynCall_iiiiijj"] = createExportWrapper("dynCall_i
 /** @type {function(...*):?} */
 var dynCall_iiiiiijj = Module["dynCall_iiiiiijj"] = createExportWrapper("dynCall_iiiiiijj");
 var ___start_em_js = Module['___start_em_js'] = 89484;
-var ___stop_em_js = Module['___stop_em_js'] = 89841;
+var ___stop_em_js = Module['___stop_em_js'] = 90641;
 
 // include: postamble.js
 // === Auto-generated postamble setup entry stuff ===
