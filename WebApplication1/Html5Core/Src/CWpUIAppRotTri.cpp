@@ -89,6 +89,74 @@ void timer_callback(void* userData) {
     render();
 }
 
+extern "C" {
+
+    EMSCRIPTEN_KEEPALIVE
+    void FilesBeingDragged(int x, int y, const char* files) {
+        // Implement your functionality here
+        ToConsole(files);
+    }
+
+    EMSCRIPTEN_KEEPALIVE
+    void FileDropped(int x, int y, const char* fileData, const char* fileName, int isError) {
+        // Implement your functionality here
+        ToConsole(fileData);
+    }
+
+    EMSCRIPTEN_KEEPALIVE
+    int GetMaxFileSize() {
+        // Implement your functionality here
+        ToConsole("GetMaxFileSize");
+        return 1000000; // For example
+    }
+
+}
+
+EM_JS(void, js_init_drag_and_drop, (), {
+    function allocateUTF8(str) {
+        var len = lengthBytesUTF8(str) + 1;
+        var ptr = _malloc(len);
+        stringToUTF8(str, ptr, len);
+        return ptr;
+    }
+
+    document.addEventListener('dragover', function(event) {
+        event.preventDefault();
+        var x = event.clientX;
+        var y = event.clientY;
+        var files = Array.from(event.dataTransfer.items).map(item => item.name).join(",");
+        _FilesBeingDragged(x, y, allocateUTF8(files));
+    });
+
+    document.addEventListener('drop', function(event) {
+        event.preventDefault();
+        var x = event.clientX;
+        var y = event.clientY;
+        var maxFileSize = _GetMaxFileSize();
+        Array.from(event.dataTransfer.items).forEach(item => {
+            if (item.kind === 'file') {
+                var file = item.getAsFile();
+                if (file.size > maxFileSize) {
+                    _FileDropped(x, y, 0, allocateUTF8(file.name), 1);
+                } else {
+                    var reader = new FileReader();
+                    reader.onload = function(event) {
+                        var fileData = new Uint8Array(event.target.result);
+                        var buffer = _malloc(fileData.length);
+                        HEAPU8.set(fileData, buffer);
+                        _FileDropped(x, y, buffer, allocateUTF8(file.name), 0);
+                        _free(buffer);
+                    };
+                    reader.onerror = function(event) {
+                        _FileDropped(x, y, 0, allocateUTF8(file.name), 1);
+                    };
+                    reader.readAsArrayBuffer(file);
+                }
+            }
+        });
+    });
+});
+
 CWpUIAppRotTri::CWpUIAppRotTri() {
 }
 
@@ -123,6 +191,9 @@ void CWpUIAppRotTri::Init()
 
     compileShaders();
 
+    // Initialize drag and drop
+    js_init_drag_and_drop();
+
     emscripten_set_interval(timer_callback, 1000, NULL);
     emscripten_set_main_loop(render, 0, 1);
 }
@@ -135,7 +206,8 @@ void CWpUIAppRotTri::OnRenderAnimate()
 }
 
 //========================================================================================================
-// WARP APPLICATION UI EVENTS CALLBACK API
+// openFileDialog
+
 extern "C" {
     // This function will be implemented in JavaScript
     void launchFileDialog(int maxFileSize);
