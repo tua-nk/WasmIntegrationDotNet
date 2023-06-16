@@ -60,7 +60,16 @@ void compileShaders() {
     }
 }
 
+double lastRenderTime = 0; // Initialize the lastRenderTime variable
+
 void render() {
+    double currentRenderTime = emscripten_get_now(); // Get the current time before rendering
+
+    // If less than 100ms has passed since the last render, then return
+    if (currentRenderTime - lastRenderTime < 100.0) {
+        return;
+    }
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -84,6 +93,8 @@ void render() {
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(0);
+
+    lastRenderTime = currentRenderTime; // Update the lastRenderTime after rendering
 }
 
 void timer_callback(void* userData) {
@@ -103,7 +114,14 @@ extern "C" {
     EMSCRIPTEN_KEEPALIVE
     void FileDropped(int x, int y, const char* fileData, const char* fileName, int isError) {
         // Implement your functionality here
-        ToConsole(fileData);
+        if (fileData == nullptr)
+        {
+            ToConsole("Unable to read large file");
+        }
+        else
+        {
+            ToConsole(fileData);
+        }
     }
 
     EMSCRIPTEN_KEEPALIVE
