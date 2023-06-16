@@ -77,6 +77,14 @@ EM_BOOL em_mouse_callback(int eventType, const EmscriptenMouseEvent* e, void* us
         e->button, e->buttons, e->movementX, e->movementY, e->canvasX, e->canvasY,
         e->timestamp);
 
+    if (eventType == EMSCRIPTEN_EVENT_MOUSEDOWN && e->button == 2) {
+        // Add your code here to handle the right click
+        if (pWpUIEm != NULL)
+        {
+            pWpUIEm->OnMouse_RightClick();
+        }
+    }
+
     // Translation of emscripten params to "Warp params"...
     sScreenPos sNewPos(e->screenX, e->screenY);
     bool bDown = eventType == EMSCRIPTEN_EVENT_MOUSEDOWN ? true : false;
@@ -602,6 +610,11 @@ void CWpUIBaseEm::OnMouse_Out(sScreenPos sPos)
 {
     // Override
     ToConsole("CWpUIBaseEm::OnMouse_Out");
+}
+
+void CWpUIBaseEm::OnMouse_RightClick()
+{
+    ToConsole("CWpUIBaseEm::OnMouse_RightClick");
 }
 
 //_______________________

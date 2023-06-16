@@ -214,6 +214,13 @@ void CWpUIAppRotTri::Init()
     // Initialize drag and drop
     js_init_drag_and_drop();
 
+    // Prevent context menu
+    EM_ASM(
+        document.oncontextmenu = function(e) {
+            e.preventDefault();
+        };
+    );
+
     emscripten_set_interval(timer_callback, 1000, NULL);
     emscripten_set_main_loop(render, 0, 1);
 }
@@ -394,6 +401,12 @@ void CWpUIAppRotTri::OnMouse_Out(sScreenPos sPos)
 {
     // Override
     ToConsole("CWpUIAppRotTri::OnMouse_Out", sPos);
+}
+
+void CWpUIAppRotTri::OnMouse_RightClick()
+{
+    // Override
+    ToConsole("CWpUIAppRotTri::OnMouse_RightClick");
 }
 
 //_______________________

@@ -31,6 +31,7 @@ public:
     virtual void OnMouse_LeaveWin(sScreenPos sPos);
     virtual void OnMouse_Over(sScreenPos sPos);
     virtual void OnMouse_Out(sScreenPos sPos);
+    virtual void OnMouse_RightClick();
 
     //_______________________
     // WINDOW EVENT CALLBACKS

@@ -1036,11 +1036,12 @@ function dbg(text) {
 // === Body ===
 
 var ASM_CONSTS = {
-  90673: ($0) => { Module.launchFileDialog($0); },  
- 90706: ($0) => { console.log(Pointer_stringify($0)); },  
- 90746: ($0) => { switch ($0) { case 0: document.body.style.cursor = 'default'; break; case 1: document.body.style.cursor = 'pointer'; break; case 2: document.body.style.cursor = 'wait'; break; case 3: document.body.style.cursor = 'none'; break; default: document.body.style.cursor = 'default'; } },  
- 91029: ($0) => { const str = UTF8ToString($0); if (!navigator.clipboard) { throw new Error('Clipboard API not supported'); } navigator.clipboard.writeText(str) .then(() => console.log('Text set to clipboard')) .catch((error) => console.error('Error setting text to clipboard:', error)); },  
- 91303: () => { var textarea = document.createElement('textarea'); document.body.appendChild(textarea); textarea.focus(); document.execCommand('paste'); var clipboardData = textarea.value; document.body.removeChild(textarea); var lengthBytes = lengthBytesUTF8(clipboardData) + 1; var stringOnHeap = _malloc(lengthBytes); stringToUTF8(clipboardData, stringOnHeap, lengthBytes); Module._clipboardData = stringOnHeap; }
+  90769: () => { document.oncontextmenu = function(e) { e.preventDefault(); }; },  
+ 90831: ($0) => { Module.launchFileDialog($0); },  
+ 90864: ($0) => { console.log(Pointer_stringify($0)); },  
+ 90904: ($0) => { switch ($0) { case 0: document.body.style.cursor = 'default'; break; case 1: document.body.style.cursor = 'pointer'; break; case 2: document.body.style.cursor = 'wait'; break; case 3: document.body.style.cursor = 'none'; break; default: document.body.style.cursor = 'default'; } },  
+ 91187: ($0) => { const str = UTF8ToString($0); if (!navigator.clipboard) { throw new Error('Clipboard API not supported'); } navigator.clipboard.writeText(str) .then(() => console.log('Text set to clipboard')) .catch((error) => console.error('Error setting text to clipboard:', error)); },  
+ 91461: () => { var textarea = document.createElement('textarea'); document.body.appendChild(textarea); textarea.focus(); document.execCommand('paste'); var clipboardData = textarea.value; document.body.removeChild(textarea); var lengthBytes = lengthBytesUTF8(clipboardData) + 1; var stringOnHeap = _malloc(lengthBytes); stringToUTF8(clipboardData, stringOnHeap, lengthBytes); Module._clipboardData = stringOnHeap; }
 };
 function js_init_drag_and_drop() { function allocateUTF8(str) { var len = lengthBytesUTF8(str) + 1; var ptr = _malloc(len); stringToUTF8(str, ptr, len); return ptr; } document.addEventListener('dragover', function(event) { event.preventDefault(); var x = event.clientX; var y = event.clientY; var files = Array.from(event.dataTransfer.items).map(item => item.name).join(","); _FilesBeingDragged(x, y, allocateUTF8(files)); }); document.addEventListener('drop', function(event) { event.preventDefault(); var x = event.clientX; var y = event.clientY; var maxFileSize = _GetMaxFileSize(); Array.from(event.dataTransfer.items).forEach(item => { if (item.kind === 'file') { var file = item.getAsFile(); if (file.size > maxFileSize) { _FileDropped(x, y, 0, allocateUTF8(file.name), 1); } else { var reader = new FileReader(); reader.onload = function(event) { var fileData = new Uint8Array(event.target.result); var buffer = _malloc(fileData.length); HEAPU8.set(fileData, buffer); _FileDropped(x, y, buffer, allocateUTF8(file.name), 0); _free(buffer); }; reader.onerror = function(event) { _FileDropped(x, y, 0, allocateUTF8(file.name), 1); }; reader.readAsArrayBuffer(file); } } }); }); }
 
@@ -7728,8 +7729,8 @@ var dynCall_iiiiij = Module["dynCall_iiiiij"] = createExportWrapper("dynCall_iii
 var dynCall_iiiiijj = Module["dynCall_iiiiijj"] = createExportWrapper("dynCall_iiiiijj");
 /** @type {function(...*):?} */
 var dynCall_iiiiiijj = Module["dynCall_iiiiiijj"] = createExportWrapper("dynCall_iiiiiijj");
-var ___start_em_js = Module['___start_em_js'] = 89516;
-var ___stop_em_js = Module['___stop_em_js'] = 90673;
+var ___start_em_js = Module['___start_em_js'] = 89612;
+var ___stop_em_js = Module['___stop_em_js'] = 90769;
 
 // include: postamble.js
 // === Auto-generated postamble setup entry stuff ===

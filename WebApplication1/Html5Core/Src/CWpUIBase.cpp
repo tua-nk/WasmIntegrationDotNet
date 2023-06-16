@@ -65,6 +65,10 @@ void CWpUIBase::OnMouse_Out(sScreenPos sPos)
 {
     // Override
 }
+void CWpUIBase::OnMouse_RightClick()
+{
+    // Override
+}
 
 //_______________________
 // WINDOW EVENT CALLBACKS
