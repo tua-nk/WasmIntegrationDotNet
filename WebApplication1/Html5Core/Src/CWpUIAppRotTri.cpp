@@ -543,57 +543,22 @@ void CWpUIAppRotTri::ClipboardSet(std::string strClipText) {
     SetClipboardText(strClipText.c_str());
 }
 
-// Declare a global variable to store the clipboard data
-char* clipboardData = nullptr;
-
-extern "C" {
-    // Declare the function to be called from JavaScript
-    EMSCRIPTEN_KEEPALIVE
-    void readClipboard() {
-        EM_ASM({
-            // Access the clipboard data using JavaScript
-            var textarea = document.createElement('textarea');
-            document.body.appendChild(textarea);
-            textarea.focus();
-            document.execCommand('paste');
-            var clipboardData = textarea.value;
-            document.body.removeChild(textarea);
-            
-            // Allocate memory in the Emscripten heap for the clipboard data
-            var lengthBytes = lengthBytesUTF8(clipboardData) + 1;
-            var stringOnHeap = _malloc(lengthBytes);
-            
-            // Copy the clipboard data to the Emscripten heap
-            stringToUTF8(clipboardData, stringOnHeap, lengthBytes);
-            
-            // Store the pointer to the clipboard data in the global variable
-            Module._clipboardData = stringOnHeap;
-        });
-    }
-    
-    // Declare a function to retrieve the clipboard data from C++
-    EMSCRIPTEN_KEEPALIVE
-    const char* getClipboardData() {
-        return clipboardData;
-    }
-    
-    // Declare a function to free the allocated memory
-    EMSCRIPTEN_KEEPALIVE
-    void freeClipboardData() {
-        if (clipboardData != nullptr) {
-            free(clipboardData);
-            clipboardData = nullptr;
+EM_JS(const char*, get_clipboard_text, (), {
+    return Asyncify.handleAsync(async () => {
+        if (!navigator.clipboard) {
+            throw new Error('Clipboard API not supported');
         }
-    }
-}
+        const text = await navigator.clipboard.readText();
+        let len = lengthBytesUTF8(text) + 1; // +1 for the null terminator
+        let ptr = _malloc(len);
+        stringToUTF8(text, ptr, len);
+        return ptr;
+    });
+});
 
 std::string CWpUIAppRotTri::ClipboardGet() {
-    // platform specific code to return clipboard's text in strClipText.
-    // Call the readClipboard() function in JavaScript
-    emscripten_run_script("readClipboard()");
-
-    // Retrieve the clipboard data from JavaScript
-    const char* clipboardData = getClipboardData();
-
-    return std::string(clipboardData);
+    char* clipboardData = (char*)get_clipboard_text();
+    std::string str(clipboardData);
+    free(clipboardData); // Free the allocated memory
+    return str;
 }
